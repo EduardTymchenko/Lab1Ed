@@ -3,4 +3,6 @@
 "erty" at [2018-03-05 15:58:38.038] inactive;
 "12345" at [2018-03-05 16:03:35.035] inactive;
 "asx" at [2018-03-05 16:08:24.024] inactive;
-"bbbbb" at [2018-03-05 16:40:45.045] inactive.
+"bbbbb" at [2018-03-05 16:40:45.045] inactive;
+"" from [2018-03-06 15:06:05.005] to [3459-08-25 09:18:00.000] every [1 hour 4 minutes 30 seconds] inactive;
+"222" at [2018-03-06 16:08:35.035] inactive.

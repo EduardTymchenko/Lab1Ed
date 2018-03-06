@@ -4,6 +4,7 @@ import com.company.model.ArrayTaskList;
 import com.company.model.Task;
 import com.company.model.TaskIO;
 import com.company.model.TaskList;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class MainController {
-    //private static final Logger logger = Logger.getLogger(MainController.class);
+    private static final Logger logger = Logger.getLogger(MainController.class);
     private static int toDoit;
     private static String fileName;
     boolean exit = false;
@@ -24,7 +25,9 @@ public class MainController {
 
     public static void main(String[] args) throws IOException, ParseException {
         MainController controller = new MainController();
+
         controller.ViewMenu();
+
     }
 
 public Task getTask(){
@@ -32,7 +35,7 @@ public Task getTask(){
     int indexTask;
     indexTask = enterNumber("Введите номер задачи:","! Такой задачи не существует","! Вы ввели не целое число");
     currentTask = currentList.getTask(indexTask);
-    return currentTask;
+    return  currentTask;
     }
 
     public void showTaskDetails(Task inTask) {
@@ -164,10 +167,10 @@ if (currentInterval == 0){
                   editTask.setTime(beginData,editTask.getEndTime(),editTask.getRepeatInterval());
                   break;
               case 2: endData = enterDate("Введите дату и время окончания задачи ");
-                  editTask.setTime(editTask.getTime(),endData,editTask.getRepeatInterval());
+                  editTask.setTime(editTask.getStartTime(),endData,editTask.getRepeatInterval());
                   break;
               case 3: currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число сек): ");
-                  editTask.setTime(editTask.getTime(),editTask.getEndTime(),currentInterval);
+                  editTask.setTime(editTask.getStartTime(),editTask.getEndTime(),currentInterval);
                   break;
               case 4: activ=!activ; editTask.setActive(activ);
                   break;
