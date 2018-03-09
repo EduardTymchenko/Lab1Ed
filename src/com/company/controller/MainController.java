@@ -25,7 +25,7 @@ public class MainController {
 
     public static void main(String[] args) throws IOException, ParseException {
         MainController controller = new MainController();
-
+        logger.info("Запуск приложения");
         controller.ViewMenu();
 
     }
@@ -68,15 +68,19 @@ if (currentInterval == 0){
 } else {Task currentTask = new Task(nameTask,beginData,endData,currentInterval);
     currentList.add(currentTask);
 }
+logger.info("Добавлена новая задача " + nameTask);
         TaskIO.writeText(currentList, new File(fileName));
+        logger.info("Задача \""+nameTask+"\" записана в файл");
     }
 
     public void deleteTask() throws IOException {
         int indexTask;
             ViewTask();
             indexTask = enterNumber("Введите номер задачи для удаления:","! Такой задачи не существует","! Вы ввели не целое число");
+            String toLoggerDelNname = currentList.getTask(indexTask).getTitle();
             currentList.remove(currentList.getTask(indexTask));
             TaskIO.writeText(currentList,new File(fileName));
+            logger.info("Задача "+ toLoggerDelNname+" удалена из файла");
     }
 
     public Date enterDate(String enterMess){
@@ -96,6 +100,7 @@ if (currentInterval == 0){
                 }
                 bError = false;
             } catch (ParseException e) {
+                logger.error(e.getMessage(),e);
                 System.out.println("! Не верные данные");
             }
         } while (bError);
@@ -111,12 +116,14 @@ if (currentInterval == 0){
             System.out.print(messEnter);
            currentIndex =Integer.parseInt(inIndex.nextLine()) ;
             if (currentIndex < 0 || currentIndex > currentList.size()-1) {
-                throw new InvalidDataExeption("The menu item does not exist");
+                throw new InvalidDataExeption("The  item does not exist");
             }
             bError = false;
         } catch (InvalidDataExeption e) {
+            logger.error(e.getMessage(),e);
             System.out.println(messDataError);
         } catch (NumberFormatException e) {
+            logger.error(e.getMessage(),e);
             System.out.println(messFormatError);
         }
     }while (bError);
@@ -132,12 +139,14 @@ if (currentInterval == 0){
                 System.out.print(enterMess);
                 currentInt = Integer.parseInt(inData.nextLine());
                 if (currentInt < 0 ) {
-                    throw new InvalidDataExeption("The menu item does not exist");
+                    throw new InvalidDataExeption("Negative number");
                 }
                 bError = false;
             } catch (InvalidDataExeption e){
+                logger.error(e.getMessage(),e);
                 System.out.println("! Вы ввели отрицательное число");
             } catch (NumberFormatException e) {
+                logger.error(e.getMessage(),e);
                 System.out.println("! Вы ввели не целое число");
             }
         } while (bError);
@@ -148,7 +157,7 @@ if (currentInterval == 0){
         Scanner inData = new Scanner(System.in);
         boolean exitEdit = false;
         int editMeny;
-        String nameTask;
+        String nameTask = "";
         Date beginData ;
         Date endData;
         int currentInterval;
@@ -161,7 +170,8 @@ if (currentInterval == 0){
           editMeny = enterPozitivInt("Введите пункт меню для редактирования:");
           switch (editMeny){
               case 0:System.out.print("0. Ведите название задачи: ");
-              editTask.setTitle(inData.nextLine());
+              nameTask = inData.nextLine();
+              editTask.setTitle(nameTask);
                   break;
               case 1: beginData = enterDate("Введите дату и время начала задачи ");
                   editTask.setTime(beginData,editTask.getEndTime(),editTask.getRepeatInterval());
@@ -174,7 +184,9 @@ if (currentInterval == 0){
                   break;
               case 4: activ=!activ; editTask.setActive(activ);
                   break;
-              case 5: TaskIO.writeText(currentList, new File(fileName)); exitEdit = true;
+              case 5: TaskIO.writeText(currentList, new File(fileName));
+                     logger.info("Задача \""+ nameTask + "\" изменина");
+                    exitEdit = true;
               break;
           }
 
@@ -194,8 +206,8 @@ if (currentInterval == 0){
 
     // вывод меню
     public void ViewMenu() throws IOException, ParseException {
-        //getBD(); //выбор файла для работы
-        fileName = "BD\\1.txt"; //для отладки
+        getBD(); //выбор файла для работы
+        //fileName = "BD\\1.txt"; //для отладки
         TaskIO.readText(currentList,new File(fileName));
 
         Scanner inMenu = new Scanner(System.in);
@@ -221,31 +233,31 @@ if (currentInterval == 0){
                     }
                     bError = false;
                 } catch (InvalidDataExeption ei) {
+                    logger.error(ei.getMessage(),ei);
                     System.out.println("! Пункт меню не существует");
                 } catch (NumberFormatException e) {
+                    logger.error(e.getMessage(),e);
                     System.out.println("! Вы ввели не целое число");
                 }
             } while (bError);
 
 // обработка путкта меню
             switch (toDoit) {
-                case 0:
 
+                case 1: logger.info("Выбран п.1 \"Все задачи\""); ViewTask();
                     break;
-                case 1: ViewTask();
-                    break;
-                case 2:
+                case 2: logger.info("Выбран п.2 \"Календарь\"");
                     break;
 
-                case 3: System.out.println("*** Ввод новой задачи ***"); addTask();
+                case 3: logger.info("Выбран п.3 \"Добавить задачу\" ");System.out.println("*** Ввод новой задачи ***"); addTask();
                     break;
-                case 4: System.out.println("*** Редактирование задачи ***"); ViewTask(); editTask();
+                case 4: logger.info("Выбран п.4 \"Редактировать задачу\"");System.out.println("*** Редактирование задачи ***"); ViewTask(); editTask();
                     break;
-                case 5: System.out.println("*** Удалить задачу ***"); deleteTask();
+                case 5: logger.info("Выбран п.5 \"Удалить задачу\"");System.out.println("*** Удалить задачу ***"); deleteTask();
                     break;
-                case 6: System.out.println("*** Детально о задаче ***"); ViewTask(); showTaskDetails(getTask());
+                case 6: logger.info("Выбран п.6 \"Детально о задаче\"");System.out.println("*** Детально о задаче ***"); ViewTask(); showTaskDetails(getTask());
                     break;
-                case 7: exit = true;
+                case 7: logger.info("Проложение завершено по команде п.7 \"Выход\" "); exit = true;
                     break;
             }
         }
@@ -264,28 +276,36 @@ if (currentInterval == 0){
            boolean createDir = newDir.mkdir();
            //Если директория не создана выход из программы
            if (!createDir) {System.out.println("Каталог создать не удалось");
+           logger.error("Папку " + dirPath + "создать не удалось. Программа завершена");
            exit = true;}
         } else {
+
             File curentDir = new File(dirPath);
             for (File item : curentDir.listFiles()){
                 System.out.println(item.getName());
             }
             if(curentDir.listFiles().length == 0) {System.out.println("Файлов нет");}
-            System.out.println("Ведите имя файла (если такого нет, будет создан):");
-            fileName = nameFile.nextLine();
+
+            do {
+                System.out.println("Ведите имя файла (если такого нет, будет создан):");
+                fileName = nameFile.nextLine();
+            }while (fileName.length() == 0);
+
             File currentFile = new File(dirPath+fileSeparator+fileName);
             if (!currentFile.exists()){
                 try{
                     boolean created = currentFile.createNewFile();
                     if (created) {
                         System.out.println("Создан новый файл: " + fileName);
+                        logger.debug("Создан новый " + dirPath + fileSeparator + fileName );
                     }
                 } catch (IOException ex){
-                    System.out.println(ex.getMessage());
+                    logger.error(ex.getMessage(),ex);
                 }
             } else {System.out.println("Выбран файл: " + fileName);}
         }
     fileName = dirPath+fileSeparator+fileName;
+        logger.info("Текущий файл списка задач " + fileName);
     }
 }
 
