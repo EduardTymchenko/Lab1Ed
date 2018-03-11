@@ -5,5 +5,5 @@
 "bbbbb" at [2018-03-05 16:40:45.045] inactive;
 "" from [2018-03-06 15:06:05.005] to [3459-08-25 09:18:00.000] every [1 hour 4 minutes 30 seconds] inactive;
 "rtty" at [2018-03-09 15:13:48.048] inactive;
-"cvb" from [2018-03-09 15:34:51.051] to [2020-12-23 13:00:00.000] every [2 hours 46 minutes 40 seconds] inactive;
+"cvb" from [2018-03-09 15:34:51.051] to [2020-12-23 13:00:00.000] every [2 hours 46 minutes 40 seconds];
 "12121" from [2018-03-09 15:37:25.025] to [3458-10-13 11:39:00.000] every [21 hours 40 minutes] inactive.

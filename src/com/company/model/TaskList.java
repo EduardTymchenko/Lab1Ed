@@ -1,6 +1,7 @@
 package com.company.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 
@@ -77,11 +78,13 @@ return false;
 
         @Override
     public String toString(){
+        SimpleDateFormat formatDate = new SimpleDateFormat("[YYYY-MM-dd HH:mm:ss.SSS]");
            String out = "";
+
         for (int i = 0; i < size(); i++){
-            out += getTask(i).getTitle()+" "+
-                    getTask(i).getStartTime()+" "+
-                    getTask(i).getEndTime()+" "+
+            out += getTask(i).getTitle()+" "+ "from: " +
+                   formatDate.format(getTask(i).getStartTime()) +" "+ "to: " +
+                   formatDate.format(getTask(i).getEndTime()) +" "+ "repeat:" +
                     getTask(i).getRepeatInterval()+" "+
                     "Active:"+getTask(i).isActive()+" "+
                     "Repeat:"+getTask(i).isRepeated()+" "+

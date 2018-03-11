@@ -1,9 +1,6 @@
 package com.company.controller;
 
-import com.company.model.ArrayTaskList;
-import com.company.model.Task;
-import com.company.model.TaskIO;
-import com.company.model.TaskList;
+import com.company.model.*;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -13,8 +10,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
+/**
+ * @author Created by EduardTymchenko 11.03.2018.
+ * @version 1.0
+ */
 
 public class MainController {
     private static final Logger logger = Logger.getLogger(MainController.class);
@@ -27,17 +27,48 @@ public class MainController {
         MainController controller = new MainController();
         logger.info("Запуск приложения");
         controller.ViewMenu();
+    }
+    /**
+     * Метод для вывода активных Задач на сутки
+     *
+     */
+    public void myCalendar (){
+        SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        Date startDate = new Date();
+        Date endDate = new Date(startDate.getTime() + (1000*60*60*24*1));
+        Map<Date,Set<Task>> map = Tasks.calendar(currentList,startDate,endDate);
 
+        for (Map.Entry entry: map.entrySet()) {
+        String tmpDate = formatDate.format(entry.getKey());
+        String stringTask = calendarTask((Set<Task>) entry.getValue()).toString();
+            System.out.print(tmpDate + " " + stringTask );
+        }
+    }
+    /**
+     * Метод используется в myCalendar ()
+     *@return список тип Задача
+     */
+    public ArrayTaskList calendarTask (Set<Task> set){
+    Set<Task> setTask = new HashSet<>(set);
+    ArrayTaskList listTask = new ArrayTaskList();
+    for (Task task: setTask){
+    listTask.add(task);
+    }
+        return listTask;
     }
 
-public Task getTask(){
-    Task currentTask;
-    int indexTask;
-    indexTask = enterNumber("Введите номер задачи:","! Такой задачи не существует","! Вы ввели не целое число");
-    currentTask = currentList.getTask(indexTask);
-    return  currentTask;
-    }
 
+    public Task getTask(){
+        Task currentTask;
+        int indexTask;
+        indexTask = enterNumber("Введите номер задачи:","! Такой задачи не существует","! Вы ввели не целое число");
+        currentTask = currentList.getTask(indexTask);
+        return  currentTask;
+    }
+    /**
+     * Метод детального вывода информации о задаче
+     *@param inTask класса Task
+     */
     public void showTaskDetails(Task inTask) {
         SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss.sss");
         System.out.println("0. Название задачи: " + inTask.getTitle());
@@ -48,7 +79,10 @@ public Task getTask(){
         else {System.out.println("4. Задача не активна");}
     }
 
-
+    /**
+     * Метод добавления новой задачи
+     *
+     */
     public void addTask() throws IOException {
         Scanner inData = new Scanner(System.in);
         String nameTask;
@@ -72,7 +106,10 @@ logger.info("Добавлена новая задача " + nameTask);
         TaskIO.writeText(currentList, new File(fileName));
         logger.info("Задача \""+nameTask+"\" записана в файл");
     }
-
+    /**
+     * Метод удаление задачи из списка по номеру в списке
+     *
+     */
     public void deleteTask() throws IOException {
         int indexTask;
             ViewTask();
@@ -82,7 +119,13 @@ logger.info("Добавлена новая задача " + nameTask);
             TaskIO.writeText(currentList,new File(fileName));
             logger.info("Задача "+ toLoggerDelNname+" удалена из файла");
     }
-
+    /**
+     * Метод используется для проверки ввода даты
+     *@param enterMess String для вывода приглашения
+     *@return дату в формате "dd.MM.yyyy hh:mm"
+     *@exception ParseException ошибка ввода формата даты
+     *
+     */
     public Date enterDate(String enterMess){
         Scanner inData = new Scanner(System.in);
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
@@ -106,7 +149,16 @@ logger.info("Добавлена новая задача " + nameTask);
         } while (bError);
         return enterDate;
     }
-// для выбора номера задачи
+
+    /**
+     * Метод используется для проверки ввода выбора номера задачи
+     *@param messEnter String для вывода приглашения
+     *@param messDataError String для вывода сообщения InvalidDataExeption
+     *@param messFormatError String для вывода сообщения NumberFormatException
+     *@exception InvalidDataExeption ошибка, ввод не существующего номера задачи
+     *@exception NumberFormatException ошибка, ввод не целого числа
+     *@return дату в формате "dd.MM.yyyy hh:mm"
+     */
     public int enterNumber(String messEnter, String messDataError, String messFormatError){
     Scanner inIndex = new Scanner(System.in);
     int currentIndex = 0;
@@ -129,7 +181,13 @@ logger.info("Добавлена новая задача " + nameTask);
     }while (bError);
     return currentIndex;
 }
-
+    /**
+     * Метод используется для проверки ввода положительного целого цисла
+     *@param enterMess String для вывода приглашения
+     *@exception InvalidDataExeption ошибка, ввод отрицательного числа
+     *@exception NumberFormatException ошибка, ввод не целого числа
+     *@return целое положительное цисло
+     */
     public int enterPozitivInt (String enterMess){
         Scanner inData = new Scanner(System.in);
         boolean bError = true;
@@ -152,7 +210,9 @@ logger.info("Добавлена новая задача " + nameTask);
         } while (bError);
         return currentInt;
     }
-
+    /**
+     * Метод используется для проверки редактирования существующих задач
+     */
     public void editTask() throws IOException {
         Scanner inData = new Scanner(System.in);
         boolean exitEdit = false;
@@ -194,7 +254,9 @@ logger.info("Добавлена новая задача " + nameTask);
     }
 
     // Viewer
-    // вывод списка задач (всех или календаря)
+    /**
+     * Метод используется для вывода всех существующих задач
+     */
     public void ViewTask()  {
     int index = 0;
         System.out.println("*** Список всех задач ***");
@@ -204,7 +266,9 @@ logger.info("Добавлена новая задача " + nameTask);
         }
     }
 
-    // вывод меню
+    /**
+     * Метод используется для основного меню
+     */
     public void ViewMenu() throws IOException, ParseException {
         getBD(); //выбор файла для работы
         //fileName = "BD\\1.txt"; //для отладки
@@ -243,12 +307,10 @@ logger.info("Добавлена новая задача " + nameTask);
 
 // обработка путкта меню
             switch (toDoit) {
-
                 case 1: logger.info("Выбран п.1 \"Все задачи\""); ViewTask();
                     break;
-                case 2: logger.info("Выбран п.2 \"Календарь\"");
+                case 2: logger.info("Выбран п.2 \"Календарь\""); System.out.println("*** Календарь на сутки ***"); myCalendar();
                     break;
-
                 case 3: logger.info("Выбран п.3 \"Добавить задачу\" ");System.out.println("*** Ввод новой задачи ***"); addTask();
                     break;
                 case 4: logger.info("Выбран п.4 \"Редактировать задачу\"");System.out.println("*** Редактирование задачи ***"); ViewTask(); editTask();
@@ -263,7 +325,9 @@ logger.info("Добавлена новая задача " + nameTask);
         }
     }
 
-    //Выбор файла для звписи
+    /**
+     * Метод используется для выбора или создания файла задач
+     */
     public void getBD(){
         Scanner nameFile = new Scanner(System.in);
         String dirPath = "BD";
