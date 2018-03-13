@@ -25,28 +25,30 @@ public class MainController {
 
     public static void main(String[] args) throws IOException, ParseException {
         MainController controller = new MainController();
-        logger.info("Р—Р°РїСѓСЃРє РїСЂРёР»РѕР¶РµРЅРёСЏ");
+        logger.info("Запуск приложения");
         controller.ViewMenu();
     }
     /**
-     * РњРµС‚РѕРґ РґР»СЏ РІС‹РІРѕРґР° Р°РєС‚РёРІРЅС‹С… Р—Р°РґР°С‡ РЅР° СЃСѓС‚РєРё
+     * Метод для вывода активных Задач на сутки
      *
      */
     public void myCalendar (){
         SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Date startDate = new Date();
         Date endDate = new Date(startDate.getTime() + (1000*60*60*24*1));
-        Map<Date,Set<Task>> map = Tasks.calendar(currentList,startDate,endDate);
+        Map<Date,Set<Task>> map;
+        map = Tasks.calendar(currentList,startDate,endDate);
 
-        for (Map.Entry entry: map.entrySet()) {
+        for (Map.Entry<Date,Set<Task>> entry: map.entrySet()) {
         String tmpDate = formatDate.format(entry.getKey());
-        String stringTask = calendarTask((Set<Task>) entry.getValue()).toString();
+        String stringTask = calendarTask(entry.getValue()).toString();
             System.out.print(tmpDate + " " + stringTask );
         }
     }
+
     /**
-     * РњРµС‚РѕРґ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РІ myCalendar ()
-     *@return СЃРїРёСЃРѕРє С‚РёРї Р—Р°РґР°С‡Р°
+     * Метод используется в myCalendar ()
+     *@return список тип Задача
      */
     public ArrayTaskList calendarTask (Set<Task> set){
     Set<Task> setTask = new HashSet<>(set);
@@ -61,26 +63,26 @@ public class MainController {
     public Task getTask(){
         Task currentTask;
         int indexTask;
-        indexTask = enterNumber("Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ Р·Р°РґР°С‡Рё:","! РўР°РєРѕР№ Р·Р°РґР°С‡Рё РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚","! Р’С‹ РІРІРµР»Рё РЅРµ С†РµР»РѕРµ С‡РёСЃР»Рѕ");
+        indexTask = enterNumber("Введите номер задачи:","! Такой задачи не существует","! Вы ввели не целое число");
         currentTask = currentList.getTask(indexTask);
         return  currentTask;
     }
     /**
-     * РњРµС‚РѕРґ РґРµС‚Р°Р»СЊРЅРѕРіРѕ РІС‹РІРѕРґР° РёРЅС„РѕСЂРјР°С†РёРё Рѕ Р·Р°РґР°С‡Рµ
-     *@param inTask РєР»Р°СЃСЃР° Task
+     * Метод детального вывода информации о задаче
+     *@param inTask класса Task
      */
     public void showTaskDetails(Task inTask) {
         SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss.sss");
-        System.out.println("0. РќР°Р·РІР°РЅРёРµ Р·Р°РґР°С‡Рё: " + inTask.getTitle());
-        System.out.println("1. Р’СЂРµРјСЏ РЅР°С‡Р°Р»Р° Р·Р°РґР°С‡Рё: " + formatDate.format(inTask.getStartTime()));
-        System.out.println("2. Р’СЂРµРјСЏ РѕРєРѕРЅС‡Р°РЅРёСЏ Р·Р°РґР°С‡Рё: " + formatDate.format(inTask.getEndTime()) );
-        System.out.println("3. Р’СЂРµРјСЏ РїРѕРІС‚РѕСЂРµРЅРёСЏ РІ СЃРµРєСѓРЅРґР°С…: " + inTask.getRepeatInterval());
-        if (inTask.isActive()){System.out.println("4.Р—Р°РґР°С‡Р° Р°РєС‚РёРІРЅР°");}
-        else {System.out.println("4. Р—Р°РґР°С‡Р° РЅРµ Р°РєС‚РёРІРЅР°");}
+        System.out.println("0. Название задачи: " + inTask.getTitle());
+        System.out.println("1. Время начала задачи: " + formatDate.format(inTask.getStartTime()));
+        System.out.println("2. Время окончания задачи: " + formatDate.format(inTask.getEndTime()) );
+        System.out.println("3. Время повторения в секундах: " + inTask.getRepeatInterval());
+        if (inTask.isActive()){System.out.println("4.Задача активна");}
+        else {System.out.println("4. Задача не активна");}
     }
 
     /**
-     * РњРµС‚РѕРґ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕР№ Р·Р°РґР°С‡Рё
+     * Метод добавления новой задачи
      *
      */
     public void addTask() throws IOException {
@@ -90,11 +92,11 @@ public class MainController {
         Date endData;
         int currentInterval;
 
-        System.out.print("Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ Р·Р°РґР°С‡Рё:");
+        System.out.print("Введите название задачи:");
         nameTask = inData.nextLine();
-        beginData = enterDate("Р’РІРµРґРёС‚Рµ РґР°С‚Сѓ Рё РІСЂРµРјСЏ РЅР°С‡Р°Р»Р° Р·Р°РґР°С‡Рё ");
-        endData = enterDate("Р’РІРµРґРёС‚Рµ РґР°С‚Сѓ Рё РІСЂРµРјСЏ РѕРєРѕРЅС‡Р°РЅРёСЏ Р·Р°РґР°С‡Рё ");
-        currentInterval = enterPozitivInt("Р’РІРµРґРёС‚Рµ РёРЅС‚РµСЂРІР°Р» РІС‹РїРѕР»РЅРµРЅРёСЏ Р·Р°РґР°С‡Рё(С†РµР»РѕРµ С‡РёСЃР»Рѕ СЃРµРє): ");
+        beginData = enterDate("Введите дату и время начала задачи ");
+        endData = enterDate("Введите дату и время окончания задачи ");
+        currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число сек): ");
 
 if (currentInterval == 0){
     Task currentTask = new Task(nameTask,endData);
@@ -102,28 +104,28 @@ if (currentInterval == 0){
 } else {Task currentTask = new Task(nameTask,beginData,endData,currentInterval);
     currentList.add(currentTask);
 }
-logger.info("Р”РѕР±Р°РІР»РµРЅР° РЅРѕРІР°СЏ Р·Р°РґР°С‡Р° " + nameTask);
+logger.info("Добавлена новая задача " + nameTask);
         TaskIO.writeText(currentList, new File(fileName));
-        logger.info("Р—Р°РґР°С‡Р° \""+nameTask+"\" Р·Р°РїРёСЃР°РЅР° РІ С„Р°Р№Р»");
+        logger.info("Задача \""+nameTask+"\" записана в файл");
     }
     /**
-     * РњРµС‚РѕРґ СѓРґР°Р»РµРЅРёРµ Р·Р°РґР°С‡Рё РёР· СЃРїРёСЃРєР° РїРѕ РЅРѕРјРµСЂСѓ РІ СЃРїРёСЃРєРµ
+     * Метод удаление задачи из списка по номеру в списке
      *
      */
     public void deleteTask() throws IOException {
         int indexTask;
             ViewTask();
-            indexTask = enterNumber("Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ Р·Р°РґР°С‡Рё РґР»СЏ СѓРґР°Р»РµРЅРёСЏ:","! РўР°РєРѕР№ Р·Р°РґР°С‡Рё РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚","! Р’С‹ РІРІРµР»Рё РЅРµ С†РµР»РѕРµ С‡РёСЃР»Рѕ");
+            indexTask = enterNumber("Введите номер задачи для удаления:","! Такой задачи не существует","! Вы ввели не целое число");
             String toLoggerDelNname = currentList.getTask(indexTask).getTitle();
             currentList.remove(currentList.getTask(indexTask));
             TaskIO.writeText(currentList,new File(fileName));
-            logger.info("Р—Р°РґР°С‡Р° "+ toLoggerDelNname+" СѓРґР°Р»РµРЅР° РёР· С„Р°Р№Р»Р°");
+            logger.info("Задача "+ toLoggerDelNname+" удалена из файла");
     }
     /**
-     * РњРµС‚РѕРґ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РїСЂРѕРІРµСЂРєРё РІРІРѕРґР° РґР°С‚С‹
-     *@param enterMess String РґР»СЏ РІС‹РІРѕРґР° РїСЂРёРіР»Р°С€РµРЅРёСЏ
-     *@return РґР°С‚Сѓ РІ С„РѕСЂРјР°С‚Рµ "dd.MM.yyyy hh:mm"
-     *@exception ParseException РѕС€РёР±РєР° РІРІРѕРґР° С„РѕСЂРјР°С‚Р° РґР°С‚С‹
+     * Метод используется для проверки ввода даты
+     *@param enterMess String для вывода приглашения
+     *@return дату в формате "dd.MM.yyyy hh:mm"
+     *@exception ParseException ошибка ввода формата даты
      *
      */
     public Date enterDate(String enterMess){
@@ -135,7 +137,7 @@ logger.info("Р”РѕР±Р°РІР»РµРЅР° РЅРѕРІР°СЏ Р·Р°РґР°С‡Р° " + nameTask);
         do {
             try {
                 System.out.println(enterMess);
-                System.out.print("С„РѕСЂРјР°С‚ РґР°РЅРЅС‹С… (РґРґ.РјРј.РіРіРіРі С‡С‡:РјРј): ");
+                System.out.print("формат данных (дд.мм.гггг чч:мм): ");
                 stringIn = inData.nextLine();
                 if (stringIn.length() == 0){enterDate = new Date();
                 } else{
@@ -144,20 +146,20 @@ logger.info("Р”РѕР±Р°РІР»РµРЅР° РЅРѕРІР°СЏ Р·Р°РґР°С‡Р° " + nameTask);
                 bError = false;
             } catch (ParseException e) {
                 logger.error(e.getMessage(),e);
-                System.out.println("! РќРµ РІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ");
+                System.out.println("! Не верные данные");
             }
         } while (bError);
         return enterDate;
     }
 
     /**
-     * РњРµС‚РѕРґ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РїСЂРѕРІРµСЂРєРё РІРІРѕРґР° РІС‹Р±РѕСЂР° РЅРѕРјРµСЂР° Р·Р°РґР°С‡Рё
-     *@param messEnter String РґР»СЏ РІС‹РІРѕРґР° РїСЂРёРіР»Р°С€РµРЅРёСЏ
-     *@param messDataError String РґР»СЏ РІС‹РІРѕРґР° СЃРѕРѕР±С‰РµРЅРёСЏ InvalidDataExeption
-     *@param messFormatError String РґР»СЏ РІС‹РІРѕРґР° СЃРѕРѕР±С‰РµРЅРёСЏ NumberFormatException
-     *@exception InvalidDataExeption РѕС€РёР±РєР°, РІРІРѕРґ РЅРµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ РЅРѕРјРµСЂР° Р·Р°РґР°С‡Рё
-     *@exception NumberFormatException РѕС€РёР±РєР°, РІРІРѕРґ РЅРµ С†РµР»РѕРіРѕ С‡РёСЃР»Р°
-     *@return РґР°С‚Сѓ РІ С„РѕСЂРјР°С‚Рµ "dd.MM.yyyy hh:mm"
+     * Метод используется для проверки ввода выбора номера задачи
+     *@param messEnter String для вывода приглашения
+     *@param messDataError String для вывода сообщения InvalidDataExeption
+     *@param messFormatError String для вывода сообщения NumberFormatException
+     *@exception InvalidDataExeption ошибка, ввод не существующего номера задачи
+     *@exception NumberFormatException ошибка, ввод не целого числа
+     *@return дату в формате "dd.MM.yyyy hh:mm"
      */
     public int enterNumber(String messEnter, String messDataError, String messFormatError){
     Scanner inIndex = new Scanner(System.in);
@@ -182,11 +184,11 @@ logger.info("Р”РѕР±Р°РІР»РµРЅР° РЅРѕРІР°СЏ Р·Р°РґР°С‡Р° " + nameTask);
     return currentIndex;
 }
     /**
-     * РњРµС‚РѕРґ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РїСЂРѕРІРµСЂРєРё РІРІРѕРґР° РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕРіРѕ С†РµР»РѕРіРѕ С†РёСЃР»Р°
-     *@param enterMess String РґР»СЏ РІС‹РІРѕРґР° РїСЂРёРіР»Р°С€РµРЅРёСЏ
-     *@exception InvalidDataExeption РѕС€РёР±РєР°, РІРІРѕРґ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРіРѕ С‡РёСЃР»Р°
-     *@exception NumberFormatException РѕС€РёР±РєР°, РІРІРѕРґ РЅРµ С†РµР»РѕРіРѕ С‡РёСЃР»Р°
-     *@return С†РµР»РѕРµ РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕРµ С†РёСЃР»Рѕ
+     * Метод используется для проверки ввода положительного целого цисла
+     *@param enterMess String для вывода приглашения
+     *@exception InvalidDataExeption ошибка, ввод отрицательного числа
+     *@exception NumberFormatException ошибка, ввод не целого числа
+     *@return целое положительное цисло
      */
     public int enterPozitivInt (String enterMess){
         Scanner inData = new Scanner(System.in);
@@ -202,16 +204,16 @@ logger.info("Р”РѕР±Р°РІР»РµРЅР° РЅРѕРІР°СЏ Р·Р°РґР°С‡Р° " + nameTask);
                 bError = false;
             } catch (InvalidDataExeption e){
                 logger.error(e.getMessage(),e);
-                System.out.println("! Р’С‹ РІРІРµР»Рё РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРµ С‡РёСЃР»Рѕ");
+                System.out.println("! Вы ввели отрицательное число");
             } catch (NumberFormatException e) {
                 logger.error(e.getMessage(),e);
-                System.out.println("! Р’С‹ РІРІРµР»Рё РЅРµ С†РµР»РѕРµ С‡РёСЃР»Рѕ");
+                System.out.println("! Вы ввели не целое число");
             }
         } while (bError);
         return currentInt;
     }
     /**
-     * РњРµС‚РѕРґ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РїСЂРѕРІРµСЂРєРё СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёС… Р·Р°РґР°С‡
+     * Метод используется для проверки редактирования существующих задач
      */
     public void editTask() throws IOException {
         Scanner inData = new Scanner(System.in);
@@ -226,26 +228,26 @@ logger.info("Р”РѕР±Р°РІР»РµРЅР° РЅРѕРІР°СЏ Р·Р°РґР°С‡Р° " + nameTask);
       Task editTask = getTask();
       do {
           showTaskDetails(editTask);
-          System.out.println("5. РЎРѕС…СЂР°РЅРёС‚СЊ Рё РІС‹Р№С‚Рё");
-          editMeny = enterPozitivInt("Р’РІРµРґРёС‚Рµ РїСѓРЅРєС‚ РјРµРЅСЋ РґР»СЏ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ:");
+          System.out.println("5. Сохранить и выйти");
+          editMeny = enterPozitivInt("Введите пункт меню для редактирования:");
           switch (editMeny){
-              case 0:System.out.print("0. Р’РµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ Р·Р°РґР°С‡Рё: ");
+              case 0:System.out.print("0. Ведите название задачи: ");
               nameTask = inData.nextLine();
               editTask.setTitle(nameTask);
                   break;
-              case 1: beginData = enterDate("Р’РІРµРґРёС‚Рµ РґР°С‚Сѓ Рё РІСЂРµРјСЏ РЅР°С‡Р°Р»Р° Р·Р°РґР°С‡Рё ");
+              case 1: beginData = enterDate("Введите дату и время начала задачи ");
                   editTask.setTime(beginData,editTask.getEndTime(),editTask.getRepeatInterval());
                   break;
-              case 2: endData = enterDate("Р’РІРµРґРёС‚Рµ РґР°С‚Сѓ Рё РІСЂРµРјСЏ РѕРєРѕРЅС‡Р°РЅРёСЏ Р·Р°РґР°С‡Рё ");
+              case 2: endData = enterDate("Введите дату и время окончания задачи ");
                   editTask.setTime(editTask.getStartTime(),endData,editTask.getRepeatInterval());
                   break;
-              case 3: currentInterval = enterPozitivInt("Р’РІРµРґРёС‚Рµ РёРЅС‚РµСЂРІР°Р» РІС‹РїРѕР»РЅРµРЅРёСЏ Р·Р°РґР°С‡Рё(С†РµР»РѕРµ С‡РёСЃР»Рѕ СЃРµРє): ");
+              case 3: currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число сек): ");
                   editTask.setTime(editTask.getStartTime(),editTask.getEndTime(),currentInterval);
                   break;
               case 4: activ=!activ; editTask.setActive(activ);
                   break;
               case 5: TaskIO.writeText(currentList, new File(fileName));
-                     logger.info("Р—Р°РґР°С‡Р° \""+ nameTask + "\" РёР·РјРµРЅРёРЅР°");
+                     logger.info("Задача \""+ nameTask + "\" изменина");
                     exitEdit = true;
               break;
           }
@@ -255,11 +257,11 @@ logger.info("Р”РѕР±Р°РІР»РµРЅР° РЅРѕРІР°СЏ Р·Р°РґР°С‡Р° " + nameTask);
 
     // Viewer
     /**
-     * РњРµС‚РѕРґ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РІС‹РІРѕРґР° РІСЃРµС… СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёС… Р·Р°РґР°С‡
+     * Метод используется для вывода всех существующих задач
      */
     public void ViewTask()  {
     int index = 0;
-        System.out.println("*** РЎРїРёСЃРѕРє РІСЃРµС… Р·Р°РґР°С‡ ***");
+        System.out.println("*** Список всех задач ***");
         for(Task task : currentList){
             System.out.println(index + ". " + task.getTitle());
             index++;
@@ -267,29 +269,29 @@ logger.info("Р”РѕР±Р°РІР»РµРЅР° РЅРѕРІР°СЏ Р·Р°РґР°С‡Р° " + nameTask);
     }
 
     /**
-     * РњРµС‚РѕРґ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РѕСЃРЅРѕРІРЅРѕРіРѕ РјРµРЅСЋ
+     * Метод используется для основного меню
      */
     public void ViewMenu() throws IOException, ParseException {
-        getBD(); //РІС‹Р±РѕСЂ С„Р°Р№Р»Р° РґР»СЏ СЂР°Р±РѕС‚С‹
-        //fileName = "BD\\1.txt"; //РґР»СЏ РѕС‚Р»Р°РґРєРё
+        getBD(); //выбор файла для работы
+        //fileName = "BD\\1.txt"; //для отладки
         TaskIO.readText(currentList,new File(fileName));
 
         Scanner inMenu = new Scanner(System.in);
 
         while (!exit) {
             boolean bError = true;
-            System.out.println("*** Р“Р»Р°РІРЅРѕРµ РјРµРЅСЋ ***");
-            System.out.println("1 - Р’СЃРµ Р·Р°РґР°С‡Рё");
-            System.out.println("2 - РљР°Р»РµРЅРґР°СЂСЊ");
-            System.out.println("3 - Р”РѕР±Р°РІРёС‚СЊ Р·Р°РґР°С‡Сѓ");
-            System.out.println("4 - Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ Р·Р°РґР°С‡Сѓ");
-            System.out.println("5 - РЈРґР°Р»РёС‚СЊ Р·Р°РґР°С‡Сѓ");
-            System.out.println("6 - Р”РµС‚Р°Р»СЊРЅРѕ Рѕ Р·Р°РґР°С‡Рµ");
-            System.out.println("7 - Р’С‹С…РѕРґ");
+            System.out.println("*** Главное меню ***");
+            System.out.println("1 - Все задачи");
+            System.out.println("2 - Календарь");
+            System.out.println("3 - Добавить задачу");
+            System.out.println("4 - Редактировать задачу");
+            System.out.println("5 - Удалить задачу");
+            System.out.println("6 - Детально о задаче");
+            System.out.println("7 - Выход");
 
             do {
                 try {
-                    System.out.print("Р’РІРµРґРёС‚Рµ РїСѓРЅРєС‚ РјРµРЅСЋ [1-7]:");
+                    System.out.print("Введите пункт меню [1-7]:");
                     toDoit = Integer.parseInt(inMenu.nextLine());
 
                     if (toDoit <= 0 || toDoit > 7) {
@@ -298,60 +300,60 @@ logger.info("Р”РѕР±Р°РІР»РµРЅР° РЅРѕРІР°СЏ Р·Р°РґР°С‡Р° " + nameTask);
                     bError = false;
                 } catch (InvalidDataExeption ei) {
                     logger.error(ei.getMessage(),ei);
-                    System.out.println("! РџСѓРЅРєС‚ РјРµРЅСЋ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
+                    System.out.println("! Пункт меню не существует");
                 } catch (NumberFormatException e) {
                     logger.error(e.getMessage(),e);
-                    System.out.println("! Р’С‹ РІРІРµР»Рё РЅРµ С†РµР»РѕРµ С‡РёСЃР»Рѕ");
+                    System.out.println("! Вы ввели не целое число");
                 }
             } while (bError);
 
-// РѕР±СЂР°Р±РѕС‚РєР° РїСѓС‚РєС‚Р° РјРµРЅСЋ
+// обработка путкта меню
             switch (toDoit) {
-                case 1: logger.info("Р’С‹Р±СЂР°РЅ Рї.1 \"Р’СЃРµ Р·Р°РґР°С‡Рё\""); ViewTask();
+                case 1: logger.info("Выбран п.1 \"Все задачи\""); ViewTask();
                     break;
-                case 2: logger.info("Р’С‹Р±СЂР°РЅ Рї.2 \"РљР°Р»РµРЅРґР°СЂСЊ\""); System.out.println("*** РљР°Р»РµРЅРґР°СЂСЊ РЅР° СЃСѓС‚РєРё ***"); myCalendar();
+                case 2: logger.info("Выбран п.2 \"Календарь\""); System.out.println("*** Календарь на сутки ***");// myCalendar();
                     break;
-                case 3: logger.info("Р’С‹Р±СЂР°РЅ Рї.3 \"Р”РѕР±Р°РІРёС‚СЊ Р·Р°РґР°С‡Сѓ\" ");System.out.println("*** Р’РІРѕРґ РЅРѕРІРѕР№ Р·Р°РґР°С‡Рё ***"); addTask();
+                case 3: logger.info("Выбран п.3 \"Добавить задачу\" ");System.out.println("*** Ввод новой задачи ***"); addTask();
                     break;
-                case 4: logger.info("Р’С‹Р±СЂР°РЅ Рї.4 \"Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ Р·Р°РґР°С‡Сѓ\"");System.out.println("*** Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ Р·Р°РґР°С‡Рё ***"); ViewTask(); editTask();
+                case 4: logger.info("Выбран п.4 \"Редактировать задачу\"");System.out.println("*** Редактирование задачи ***"); ViewTask(); editTask();
                     break;
-                case 5: logger.info("Р’С‹Р±СЂР°РЅ Рї.5 \"РЈРґР°Р»РёС‚СЊ Р·Р°РґР°С‡Сѓ\"");System.out.println("*** РЈРґР°Р»РёС‚СЊ Р·Р°РґР°С‡Сѓ ***"); deleteTask();
+                case 5: logger.info("Выбран п.5 \"Удалить задачу\"");System.out.println("*** Удалить задачу ***"); deleteTask();
                     break;
-                case 6: logger.info("Р’С‹Р±СЂР°РЅ Рї.6 \"Р”РµС‚Р°Р»СЊРЅРѕ Рѕ Р·Р°РґР°С‡Рµ\"");System.out.println("*** Р”РµС‚Р°Р»СЊРЅРѕ Рѕ Р·Р°РґР°С‡Рµ ***"); ViewTask(); showTaskDetails(getTask());
+                case 6: logger.info("Выбран п.6 \"Детально о задаче\"");System.out.println("*** Детально о задаче ***"); ViewTask(); showTaskDetails(getTask());
                     break;
-                case 7: logger.info("РџСЂРѕР»РѕР¶РµРЅРёРµ Р·Р°РІРµСЂС€РµРЅРѕ РїРѕ РєРѕРјР°РЅРґРµ Рї.7 \"Р’С‹С…РѕРґ\" "); exit = true;
+                case 7: logger.info("Проложение завершено по команде п.7 \"Выход\" "); exit = true;
                     break;
             }
         }
     }
 
     /**
-     * РњРµС‚РѕРґ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РІС‹Р±РѕСЂР° РёР»Рё СЃРѕР·РґР°РЅРёСЏ С„Р°Р№Р»Р° Р·Р°РґР°С‡
+     * Метод используется для выбора или создания файла задач
      */
     public void getBD(){
         Scanner nameFile = new Scanner(System.in);
         String dirPath = "BD";
-        // РїРѕР»СѓС‡Р°РµРј СЂР°Р·РґРµР»РёС‚РµР»СЊ РїСѓС‚Рё РІ С‚РµРєСѓС‰РµР№ РѕРїРµСЂР°С†РёРѕРЅРЅРѕР№ СЃРёСЃС‚РµРјРµ
+        // получаем разделитель пути в текущей операционной системе
         String fileSeparator = System.getProperty("file.separator");
-        //РџСЂРѕРІРµСЂСЏРµРј СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёРµ РїР°РїРєРё, РЅРµС‚ СЃРѕР·РґР°РµРј
+        //Проверяем существование папки, нет создаем
         Path path = Paths.get(dirPath);
         if (!Files.exists(path)){
             File newDir = new File(dirPath);
            boolean createDir = newDir.mkdir();
-           //Р•СЃР»Рё РґРёСЂРµРєС‚РѕСЂРёСЏ РЅРµ СЃРѕР·РґР°РЅР° РІС‹С…РѕРґ РёР· РїСЂРѕРіСЂР°РјРјС‹
-           if (!createDir) {System.out.println("РљР°С‚Р°Р»РѕРі СЃРѕР·РґР°С‚СЊ РЅРµ СѓРґР°Р»РѕСЃСЊ");
-           logger.error("РџР°РїРєСѓ " + dirPath + "СЃРѕР·РґР°С‚СЊ РЅРµ СѓРґР°Р»РѕСЃСЊ. РџСЂРѕРіСЂР°РјРјР° Р·Р°РІРµСЂС€РµРЅР°");
+           //Если директория не создана выход из программы
+           if (!createDir) {System.out.println("Каталог создать не удалось");
+           logger.error("Папку " + dirPath + "создать не удалось. Программа завершена");
            exit = true;}
-        } else {
+        }
 
             File curentDir = new File(dirPath);
             for (File item : curentDir.listFiles()){
                 System.out.println(item.getName());
             }
-            if(curentDir.listFiles().length == 0) {System.out.println("Р¤Р°Р№Р»РѕРІ РЅРµС‚");}
+            if(curentDir.listFiles().length == 0) {System.out.println("Файлов нет");}
 
             do {
-                System.out.println("Р’РµРґРёС‚Рµ РёРјСЏ С„Р°Р№Р»Р° (РµСЃР»Рё С‚Р°РєРѕРіРѕ РЅРµС‚, Р±СѓРґРµС‚ СЃРѕР·РґР°РЅ):");
+                System.out.println("Ведите имя файла (если такого нет, будет создан):");
                 fileName = nameFile.nextLine();
             }while (fileName.length() == 0);
 
@@ -360,16 +362,16 @@ logger.info("Р”РѕР±Р°РІР»РµРЅР° РЅРѕРІР°СЏ Р·Р°РґР°С‡Р° " + nameTask);
                 try{
                     boolean created = currentFile.createNewFile();
                     if (created) {
-                        System.out.println("РЎРѕР·РґР°РЅ РЅРѕРІС‹Р№ С„Р°Р№Р»: " + fileName);
-                        logger.debug("РЎРѕР·РґР°РЅ РЅРѕРІС‹Р№ " + dirPath + fileSeparator + fileName );
+                        System.out.println("Создан новый файл: " + fileName);
+                        logger.debug("Создан новый " + dirPath + fileSeparator + fileName );
                     }
                 } catch (IOException ex){
                     logger.error(ex.getMessage(),ex);
                 }
-            } else {System.out.println("Р’С‹Р±СЂР°РЅ С„Р°Р№Р»: " + fileName);}
-        }
+            } else {System.out.println("Выбран файл: " + fileName);}
+
     fileName = dirPath+fileSeparator+fileName;
-        logger.info("РўРµРєСѓС‰РёР№ С„Р°Р№Р» СЃРїРёСЃРєР° Р·Р°РґР°С‡ " + fileName);
+        logger.info("Текущий файл списка задач " + fileName);
     }
 }
 
