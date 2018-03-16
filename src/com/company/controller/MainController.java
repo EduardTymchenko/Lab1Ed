@@ -76,7 +76,7 @@ public class MainController {
         System.out.println("0. Название задачи: " + inTask.getTitle());
         System.out.println("1. Время начала задачи: " + formatDate.format(inTask.getStartTime()));
         System.out.println("2. Время окончания задачи: " + formatDate.format(inTask.getEndTime()) );
-        System.out.println("3. Время повторения в секундах: " + inTask.getRepeatInterval());
+        System.out.println("3. Время повторения в минутах: " + inTask.getRepeatInterval()/60);
         if (inTask.isActive()){System.out.println("4.Задача активна");}
         else {System.out.println("4. Задача не активна");}
     }
@@ -96,7 +96,8 @@ public class MainController {
         nameTask = inData.nextLine();
         beginData = enterDate("Введите дату и время начала задачи ");
         endData = enterDate("Введите дату и время окончания задачи ");
-        currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число сек): ");
+        currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число мин.): ");
+        currentInterval = 60*currentInterval;
 
 if (currentInterval == 0){
     Task currentTask = new Task(nameTask,endData);
@@ -241,7 +242,8 @@ logger.info("Добавлена новая задача " + nameTask);
               case 2: endData = enterDate("Введите дату и время окончания задачи ");
                   editTask.setTime(editTask.getStartTime(),endData,editTask.getRepeatInterval());
                   break;
-              case 3: currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число сек): ");
+              case 3: currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число мин.): ");
+                  currentInterval = 60*currentInterval;
                   editTask.setTime(editTask.getStartTime(),editTask.getEndTime(),currentInterval);
                   break;
               case 4: activ=!activ; editTask.setActive(activ);
@@ -261,6 +263,7 @@ logger.info("Добавлена новая задача " + nameTask);
      */
     public void ViewTask()  {
     int index = 0;
+
         System.out.println("*** Список всех задач ***");
         for(Task task : currentList){
             System.out.println(index + ". " + task.getTitle());
@@ -272,12 +275,13 @@ logger.info("Добавлена новая задача " + nameTask);
      * Метод используется для основного меню
      */
     public void ViewMenu() throws IOException, ParseException {
+        System.out.println("### Welcome to TASK MANAGER ###");
         getBD(); //выбор файла для работы
         //fileName = "BD\\1.txt"; //для отладки
         TaskIO.readText(currentList,new File(fileName));
 
         Scanner inMenu = new Scanner(System.in);
-
+        System.out.println();
         while (!exit) {
             boolean bError = true;
             System.out.println("*** Главное меню ***");
@@ -309,20 +313,21 @@ logger.info("Добавлена новая задача " + nameTask);
 
 // обработка путкта меню
             switch (toDoit) {
-                case 1: logger.info("Выбран п.1 \"Все задачи\""); ViewTask();
+                case 1: logger.info("Выбран п.1 \"Все задачи\""); System.out.println();ViewTask();
                     break;
-                case 2: logger.info("Выбран п.2 \"Календарь\""); System.out.println("*** Календарь на сутки ***");// myCalendar();
+                case 2: logger.info("Выбран п.2 \"Календарь\""); System.out.println("\n*** Календарь на сутки ***"); myCalendar();
                     break;
-                case 3: logger.info("Выбран п.3 \"Добавить задачу\" ");System.out.println("*** Ввод новой задачи ***"); addTask();
+                case 3: logger.info("Выбран п.3 \"Добавить задачу\" ");System.out.println("\n*** Ввод новой задачи ***"); addTask();
                     break;
-                case 4: logger.info("Выбран п.4 \"Редактировать задачу\"");System.out.println("*** Редактирование задачи ***"); ViewTask(); editTask();
+                case 4: logger.info("Выбран п.4 \"Редактировать задачу\"");System.out.println("\n*** Редактирование задачи ***"); ViewTask(); editTask();
                     break;
-                case 5: logger.info("Выбран п.5 \"Удалить задачу\"");System.out.println("*** Удалить задачу ***"); deleteTask();
+                case 5: logger.info("Выбран п.5 \"Удалить задачу\"");System.out.println("\n*** Удалить задачу ***"); deleteTask();
                     break;
-                case 6: logger.info("Выбран п.6 \"Детально о задаче\"");System.out.println("*** Детально о задаче ***"); ViewTask(); showTaskDetails(getTask());
+                case 6: logger.info("Выбран п.6 \"Детально о задаче\"");System.out.println("\n*** Детально о задаче ***"); ViewTask(); showTaskDetails(getTask());
                     break;
                 case 7: logger.info("Проложение завершено по команде п.7 \"Выход\" "); exit = true;
                     break;
+
             }
         }
     }
