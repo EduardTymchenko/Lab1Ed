@@ -36,8 +36,8 @@ public class MainController {
      */
     public void myCalendar (){
         SimpleDateFormat formatDate = new SimpleDateFormat(IN_FORMAT_DATE);
-        Date startDate = new Date();
-        Date endDate = new Date(startDate.getTime() + (1000*60*60*24*1));
+        Date startDate = enterDate("Введите дату и время начала календаря ");
+        Date endDate = enterDate("Введите дату и время окончания календаря ");
         Map<Date,Set<Task>> map;
         map = Tasks.calendar(currentList,startDate,endDate);
 
