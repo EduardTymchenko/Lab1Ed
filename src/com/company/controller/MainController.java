@@ -95,6 +95,7 @@ public class MainController {
 
         System.out.print("Введите название задачи:");
         nameTask = inData.nextLine();
+        setExit(nameTask);
         beginData = enterDate("Введите дату и время начала задачи ");
         endData = enterDate("Введите дату и время окончания задачи ");
         currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число мин.): ");
@@ -143,6 +144,7 @@ logger.info("Добавлена новая задача " + nameTask);
                 System.out.println(enterMess);
                 System.out.print("формат данных (дд.мм.гггг чч:мм): ");
                 stringIn = inData.nextLine();
+                setExit(stringIn);
                 if (stringIn.length() == 0){enterDate = new Date();
                 } else{
                     enterDate = format.parse(stringIn);
@@ -175,10 +177,13 @@ logger.info("Добавлена новая задача " + nameTask);
     public int enterNumber(String messEnter, String messDataError, String messFormatError){
     int currentIndex = 0;
     boolean bError = true;
+    String inEnterNumber;
     do {
         try {
             System.out.print(messEnter);
-           currentIndex =Integer.parseInt(inData.nextLine()) ;
+            inEnterNumber = inData.nextLine();
+            setExit(inEnterNumber);
+           currentIndex =Integer.parseInt(inEnterNumber) ;
             if (currentIndex < 0 || currentIndex > currentList.size()-1) {
                 throw new InvalidDataExeption("The  item does not exist");
             }
@@ -203,10 +208,13 @@ logger.info("Добавлена новая задача " + nameTask);
     public int enterPozitivInt (String enterMess){
         boolean bError = true;
         int currentInt = 0;
+        String inPozitivInt;
         do {
             try {
                 System.out.print(enterMess);
-                currentInt = Integer.parseInt(inData.nextLine());
+                inPozitivInt = inData.nextLine();
+                setExit(inPozitivInt);
+                currentInt = Integer.parseInt(inPozitivInt);
                 if (currentInt < 0 ) {
                     throw new InvalidDataExeption("Negative number");
                 }
@@ -241,6 +249,7 @@ logger.info("Добавлена новая задача " + nameTask);
           switch (editMeny){
               case 0:System.out.print("0. Ведите название задачи: ");
               nameTask = inData.nextLine();
+              setExit(nameTask);
               editTask.setTitle(nameTask);
                   break;
               case 1: beginData = enterDate("Введите дату и время начала задачи ");
@@ -282,9 +291,10 @@ logger.info("Добавлена новая задача " + nameTask);
      * Метод используется для основного меню
      */
     public void ViewMenu() throws IOException, ParseException {
+        String inViewMenu;
         System.out.println("### Welcome to TASK MANAGER ###");
+        System.out.println("* Для выхода с приложения введите exit");
         getBD(); //выбор файла для работы
-        //fileName = "BD\\1.txt"; //для отладки
         TaskIO.readText(currentList,new File(fileName));
 
         System.out.println();
@@ -302,7 +312,9 @@ logger.info("Добавлена новая задача " + nameTask);
             do {
                 try {
                     System.out.print("Введите пункт меню [1-7]:");
-                    toDoit = Integer.parseInt(inData.nextLine());
+                    inViewMenu = inData.nextLine();
+                    setExit(inViewMenu);
+                    toDoit = Integer.parseInt(inViewMenu);
 
                     if (toDoit <= 0 || toDoit > 7) {
                         throw new InvalidDataExeption("The menu item does not exist");
@@ -381,6 +393,7 @@ logger.info("Добавлена новая задача " + nameTask);
             do {
                 System.out.println("Ведите имя файла (если такого нет, будет создан):");
                 String tmpFileName =  inData.nextLine();
+                setExit(tmpFileName);
                 if (tmpFileName.length() != 0 ){
                     fileName = tmpFileName;
                 }
@@ -408,7 +421,12 @@ logger.info("Добавлена новая задача " + nameTask);
         }
             fileName = dirPath+fileSeparator+fileName;
             logger.info("Текущий файл списка задач " + fileName);
-
+    }
+    private void setExit (String inputString){
+        if (inputString.equals("exit")){
+            logger.info("Программа завершена по команде exit");
+            System.exit(0);
+        }
     }
 }
 
