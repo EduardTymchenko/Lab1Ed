@@ -19,6 +19,8 @@ public class MainController {
     private static final Logger logger = Logger.getLogger(MainController.class);
     private static int toDoit;
     private static String fileName = "";
+    private final  String IN_FORMAT_DATE = "dd.MM.yyyy HH:mm";
+    private final int MAX_YEAR = 100;
     private Scanner inData = new Scanner(System.in);
     boolean exit = false;
     private TaskList currentList = new ArrayTaskList();
@@ -33,7 +35,7 @@ public class MainController {
      *
      */
     public void myCalendar (){
-        SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        SimpleDateFormat formatDate = new SimpleDateFormat(IN_FORMAT_DATE);
         Date startDate = new Date();
         Date endDate = new Date(startDate.getTime() + (1000*60*60*24*1));
         Map<Date,Set<Task>> map;
@@ -72,7 +74,7 @@ public class MainController {
      *@param inTask класса Task
      */
     public void showTaskDetails(Task inTask) {
-        SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss.sss");
+        SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.sss");
         System.out.println("0. Название задачи: " + inTask.getTitle());
         System.out.println("1. Время начала задачи: " + formatDate.format(inTask.getStartTime()));
         System.out.println("2. Время окончания задачи: " + formatDate.format(inTask.getEndTime()) );
@@ -129,9 +131,12 @@ logger.info("Добавлена новая задача " + nameTask);
      *
      */
     public Date enterDate(String enterMess){
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        SimpleDateFormat format = new SimpleDateFormat(IN_FORMAT_DATE);
+        format.setLenient(false); //жесткая проверка формата
         String stringIn;
         Date enterDate = new Date();
+
+        int deltaYear = 0;
         boolean bError = true;
         do {
             try {
@@ -141,6 +146,13 @@ logger.info("Добавлена новая задача " + nameTask);
                 if (stringIn.length() == 0){enterDate = new Date();
                 } else{
                     enterDate = format.parse(stringIn);
+                    // Преобразуем в календарь, получаем года и их разницу
+                    Calendar enterToCalendar = Calendar.getInstance();
+                    Calendar currentToCalendar = Calendar.getInstance();
+                    enterToCalendar.setTime(enterDate);
+                    currentToCalendar.setTime(new Date());
+                    deltaYear = enterToCalendar.get(Calendar.YEAR) - currentToCalendar.get(Calendar.YEAR);
+                    if (deltaYear > MAX_YEAR) throw new ParseException("Время задачи более " + MAX_YEAR + " лет",0);
                 }
                 bError = false;
             } catch (ParseException e) {
