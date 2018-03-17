@@ -20,6 +20,7 @@ public class MainController {
     private static final Logger logger = Logger.getLogger(MainController.class);
     private static int toDoit;
     private static String fileName;
+    private Scanner inData = new Scanner(System.in);
     boolean exit = false;
     private TaskList currentList = new ArrayTaskList();
 
@@ -86,7 +87,6 @@ public class MainController {
      *
      */
     public void addTask() throws IOException {
-        Scanner inData = new Scanner(System.in);
         String nameTask;
         Date beginData ;
         Date endData;
@@ -130,7 +130,6 @@ logger.info("Добавлена новая задача " + nameTask);
      *
      */
     public Date enterDate(String enterMess){
-        Scanner inData = new Scanner(System.in);
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         String stringIn;
         Date enterDate = new Date();
@@ -163,13 +162,12 @@ logger.info("Добавлена новая задача " + nameTask);
      *@return дату в формате "dd.MM.yyyy hh:mm"
      */
     public int enterNumber(String messEnter, String messDataError, String messFormatError){
-    Scanner inIndex = new Scanner(System.in);
     int currentIndex = 0;
     boolean bError = true;
     do {
         try {
             System.out.print(messEnter);
-           currentIndex =Integer.parseInt(inIndex.nextLine()) ;
+           currentIndex =Integer.parseInt(inData.nextLine()) ;
             if (currentIndex < 0 || currentIndex > currentList.size()-1) {
                 throw new InvalidDataExeption("The  item does not exist");
             }
@@ -192,7 +190,6 @@ logger.info("Добавлена новая задача " + nameTask);
      *@return целое положительное цисло
      */
     public int enterPozitivInt (String enterMess){
-        Scanner inData = new Scanner(System.in);
         boolean bError = true;
         int currentInt = 0;
         do {
@@ -217,7 +214,6 @@ logger.info("Добавлена новая задача " + nameTask);
      * Метод используется для проверки редактирования существующих задач
      */
     public void editTask() throws IOException {
-        Scanner inData = new Scanner(System.in);
         boolean exitEdit = false;
         int editMeny;
         String nameTask = "";
@@ -280,7 +276,6 @@ logger.info("Добавлена новая задача " + nameTask);
         //fileName = "BD\\1.txt"; //для отладки
         TaskIO.readText(currentList,new File(fileName));
 
-        Scanner inMenu = new Scanner(System.in);
         System.out.println();
         while (!exit) {
             boolean bError = true;
@@ -296,7 +291,7 @@ logger.info("Добавлена новая задача " + nameTask);
             do {
                 try {
                     System.out.print("Введите пункт меню [1-7]:");
-                    toDoit = Integer.parseInt(inMenu.nextLine());
+                    toDoit = Integer.parseInt(inData.nextLine());
 
                     if (toDoit <= 0 || toDoit > 7) {
                         throw new InvalidDataExeption("The menu item does not exist");
@@ -336,7 +331,6 @@ logger.info("Добавлена новая задача " + nameTask);
      * Метод используется для выбора или создания файла задач
      */
     public void getBD(){
-        Scanner nameFile = new Scanner(System.in);
         String dirPath = "BD";
         // получаем разделитель пути в текущей операционной системе
         String fileSeparator = System.getProperty("file.separator");
@@ -359,7 +353,7 @@ logger.info("Добавлена новая задача " + nameTask);
 
             do {
                 System.out.println("Ведите имя файла (если такого нет, будет создан):");
-                fileName = nameFile.nextLine();
+                fileName = inData.nextLine();
             }while (fileName.length() == 0);
 
             File currentFile = new File(dirPath+fileSeparator+fileName);
