@@ -3,8 +3,7 @@ package com.company.controller;
 import com.company.model.*;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +18,7 @@ import java.util.*;
 public class MainController {
     private static final Logger logger = Logger.getLogger(MainController.class);
     private static int toDoit;
-    private static String fileName;
+    private static String fileName = "";
     private Scanner inData = new Scanner(System.in);
     boolean exit = false;
     private TaskList currentList = new ArrayTaskList();
@@ -334,6 +333,23 @@ logger.info("Добавлена новая задача " + nameTask);
         String dirPath = "BD";
         // получаем разделитель пути в текущей операционной системе
         String fileSeparator = System.getProperty("file.separator");
+        File lastFile = new File("lastList.txt");
+
+        // читаем имя последней базы задач
+        try (BufferedReader bufRead = new BufferedReader(new FileReader("lastList.txt"))){
+            if (!lastFile.exists()) {
+                lastFile.createNewFile();
+                System.out.println("Последний список задач недоступен");
+                logger.info("Файл для записи имени последнего списка задач создан новый");
+            } else if (lastFile.length() == 0) {
+                System.out.println("Последний список задач недоступен");
+                logger.info("Последний список задач недоступен файл пустой");
+            } else {
+                fileName = bufRead.readLine();
+                System.out.println("Для продолжения работы с " + fileName + " нажмите Enter."); }
+        }catch (IOException e){
+            logger.error(e.getMessage(),e);
+        }
         //Проверяем существование папки, нет создаем
         Path path = Paths.get(dirPath);
         if (!Files.exists(path)){
@@ -344,16 +360,18 @@ logger.info("Добавлена новая задача " + nameTask);
            logger.error("Папку " + dirPath + "создать не удалось. Программа завершена");
            exit = true;}
         }
-
-            File curentDir = new File(dirPath);
-            for (File item : curentDir.listFiles()){
+        File curentDir = new File(dirPath);
+        for (File item : curentDir.listFiles()){
                 System.out.println(item.getName());
             }
             if(curentDir.listFiles().length == 0) {System.out.println("Файлов нет");}
 
             do {
                 System.out.println("Ведите имя файла (если такого нет, будет создан):");
-                fileName = inData.nextLine();
+                String tmpFileName =  inData.nextLine();
+                if (tmpFileName.length() != 0 ){
+                    fileName = tmpFileName;
+                }
             }while (fileName.length() == 0);
 
             File currentFile = new File(dirPath+fileSeparator+fileName);
@@ -367,10 +385,18 @@ logger.info("Добавлена новая задача " + nameTask);
                 } catch (IOException ex){
                     logger.error(ex.getMessage(),ex);
                 }
-            } else {System.out.println("Выбран файл: " + fileName);}
+            } else {
+                System.out.println("Выбран файл: " + fileName);
+            }
+// сохраняем имя последней базы задач
+        try (BufferedWriter bufWrite = new BufferedWriter(new FileWriter("lastList.txt"))){
+            bufWrite.write(fileName);
+        }catch (IOException e){
+            logger.error(e.getMessage(),e);
+        }
+            fileName = dirPath+fileSeparator+fileName;
+            logger.info("Текущий файл списка задач " + fileName);
 
-    fileName = dirPath+fileSeparator+fileName;
-        logger.info("Текущий файл списка задач " + fileName);
     }
 }
 
