@@ -16,7 +16,7 @@ import java.util.*;
  */
 
 public class MainController {
-    private static final Logger logger = Logger.getLogger(MainController.class);
+    private static final Logger LOGGER = Logger.getLogger(MainController.class);
     private static int toDoit;
     private static String fileName = "";
     private final  String IN_FORMAT_DATE = "dd.MM.yyyy HH:mm";
@@ -26,7 +26,7 @@ public class MainController {
 
     public static void main(String[] args) throws IOException, ParseException {
         MainController controller = new MainController();
-        logger.info("Запуск приложения");
+        LOGGER.info("Запуск приложения");
         controller.viewMenu();
     }
     /**
@@ -34,6 +34,7 @@ public class MainController {
      *
      */
     public void myCalendar (){
+        LOGGER.info("Выбран п.2 \"Календарь\"");
         SimpleDateFormat formatDate = new SimpleDateFormat(IN_FORMAT_DATE);
         Date startDate = enterDate("Введите дату и время начала календаря ");
         Date endDate = enterDate("Введите дату и время окончания календаря ");
@@ -60,7 +61,6 @@ public class MainController {
     return listTask;
     }
 
-
     public Task getTask(){
         Task currentTask;
         int indexTask;
@@ -73,6 +73,7 @@ public class MainController {
      *@param inTask класса Task
      */
     public void showTaskDetails(Task inTask) {
+        LOGGER.info("Выбран п.6 \"Детально о задаче\"");
         SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.sss");
         System.out.println("0. Название задачи: " + inTask.getTitle());
         System.out.println("1. Время начала задачи: " + formatDate.format(inTask.getStartTime()));
@@ -90,6 +91,7 @@ public class MainController {
      *
      */
     public void addTask() throws IOException {
+        LOGGER.info("Выбран п.3 \"Добавить задачу\" ");
         String nameTask;
         Date beginData ;
         Date endData;
@@ -110,21 +112,22 @@ public class MainController {
             Task currentTask = new Task(nameTask,beginData,endData,currentInterval);
             currentList.add(currentTask);
         }
-        logger.info("Добавлена новая задача " + nameTask);
+        LOGGER.info("Добавлена новая задача " + nameTask);
         TaskIO.writeText(currentList, new File(fileName));
-        logger.info("Задача \""+nameTask+"\" записана в файл");
+        LOGGER.info("Задача \""+nameTask+"\" записана в файл");
     }
     /**
      * Метод удаление задачи из списка по номеру в списке
      *
      */
     public void deleteTask() throws IOException {
+        LOGGER.info("Выбран п.5 \"Удалить задачу\"");
         int indexTask;
             indexTask = enterNumber("Введите номер задачи для удаления:","! Такой задачи не существует","! Вы ввели не целое число");
             String toLoggerDelNname = currentList.getTask(indexTask).getTitle();
             currentList.remove(currentList.getTask(indexTask));
             TaskIO.writeText(currentList,new File(fileName));
-            logger.info("Задача "+ toLoggerDelNname+" удалена из файла");
+            LOGGER.info("Задача "+ toLoggerDelNname+" удалена из файла");
     }
     /**
      * Метод используется для проверки ввода даты
@@ -161,7 +164,7 @@ public class MainController {
                 }
                 break;
             } catch (ParseException e) {
-                logger.error(e.getMessage(),e);
+                LOGGER.error(e.getMessage(),e);
                 System.out.println("! Не верные данные");
             }
         } while (true);
@@ -191,10 +194,10 @@ public class MainController {
             }
             break;
         } catch (InvalidDataExeption e) {
-            logger.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(),e);
             System.out.println(messDataError);
         } catch (NumberFormatException e) {
-            logger.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(),e);
             System.out.println(messFormatError);
         }
     }while (true);
@@ -221,10 +224,10 @@ public class MainController {
                 }
                 break;
             } catch (InvalidDataExeption e){
-                logger.error(e.getMessage(),e);
+                LOGGER.error(e.getMessage(),e);
                 System.out.println("! Вы ввели отрицательное число");
             } catch (NumberFormatException e) {
-                logger.error(e.getMessage(),e);
+                LOGGER.error(e.getMessage(),e);
                 System.out.println("! Вы ввели не целое число");
             }
         } while (true);
@@ -234,6 +237,7 @@ public class MainController {
      * Метод используется для проверки редактирования существующих задач
      */
     public void editTask() throws IOException {
+        LOGGER.info("Выбран п.4 \"Редактировать задачу\"");
         boolean exitEdit = false;
         int editMeny;
         String nameTask = "";
@@ -273,7 +277,7 @@ public class MainController {
                     break;
                 case 5:
                     TaskIO.writeText(currentList, new File(fileName));
-                    logger.info("Задача \"" + nameTask + "\" изменина");
+                    LOGGER.info("Задача \"" + nameTask + "\" изменина");
                     exitEdit = true;
                     break;
             }
@@ -285,6 +289,7 @@ public class MainController {
      * Метод используется для вывода всех существующих задач
      */
     public void viewTask(){
+        LOGGER.info("Выбран п.1 \"Все задачи\"");
         int index = 0;
         System.out.println("*** Список всех задач ***");
         if (currentList.size() == 0){
@@ -328,32 +333,28 @@ public class MainController {
                     }
                     break;
                 } catch (InvalidDataExeption ei) {
-                    logger.error(ei.getMessage(),ei);
+                    LOGGER.error(ei.getMessage(),ei);
                     System.out.println("! Пункт меню не существует");
                 } catch (NumberFormatException e) {
-                    logger.error(e.getMessage(),e);
+                    LOGGER.error(e.getMessage(),e);
                     System.out.println("! Вы ввели не целое число");
                 }
             } while (true);
             // обработка путкта меню
             switch (toDoit) {
                 case 1:
-                    logger.info("Выбран п.1 \"Все задачи\"");
                     System.out.println();
                     viewTask();
                     break;
                 case 2:
-                    logger.info("Выбран п.2 \"Календарь\"");
                     System.out.println("\n*** Календарь ***");
                     myCalendar();
                     break;
                 case 3:
-                    logger.info("Выбран п.3 \"Добавить задачу\" ");
                     System.out.println("\n*** Ввод новой задачи ***");
                     addTask();
                     break;
                 case 4:
-                    logger.info("Выбран п.4 \"Редактировать задачу\"");
                     System.out.println("\n*** Редактирование задачи ***");
                     viewTask();
                     if (currentList.size() != 0){
@@ -361,7 +362,6 @@ public class MainController {
                     }
                     break;
                 case 5:
-                    logger.info("Выбран п.5 \"Удалить задачу\"");
                     System.out.println("\n*** Удалить задачу ***");
                     viewTask();
                     if(currentList.size() != 0){
@@ -369,14 +369,14 @@ public class MainController {
                     }
                     break;
                 case 6:
-                    logger.info("Выбран п.6 \"Детально о задаче\"");
                     System.out.println("\n*** Детально о задаче ***");
                     viewTask();
                     if(currentList.size() != 0){
                         showTaskDetails(getTask());
                     }
                     break;
-                case 7: logger.info("Проложение завершено по команде п.7 \"Выход\" ");
+                case 7:
+                    LOGGER.info("Проложение завершено по команде п.7 \"Выход\" ");
                     System.exit(0);
             }
         }
@@ -395,15 +395,15 @@ public class MainController {
             if (!lastFile.exists()) {
                 lastFile.createNewFile();
                 System.out.println("Последний список задач недоступен");
-                logger.info("Файл для записи имени последнего списка задач создан новый");
+                LOGGER.info("Файл для записи имени последнего списка задач создан новый");
             } else if (lastFile.length() == 0) {
                 System.out.println("Последний список задач недоступен");
-                logger.info("Последний список задач недоступен файл пустой");
+                LOGGER.info("Последний список задач недоступен файл пустой");
             } else {
                 fileName = bufRead.readLine();
                 System.out.println("Для продолжения работы с " + fileName + " нажмите Enter."); }
         }catch (IOException e){
-            logger.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(),e);
         }
         //Проверяем существование папки, нет создаем
         Path path = Paths.get(dirPath);
@@ -412,7 +412,7 @@ public class MainController {
             //Если директория не создана выход из программы
             if (!newDir.mkdir()) {
                 System.out.println("Каталог создать не удалось");
-                logger.error("Папку " + dirPath + "создать не удалось. Программа завершена");
+                LOGGER.error("Папку " + dirPath + "создать не удалось. Программа завершена");
                 System.exit(0);
             }
         }
@@ -439,10 +439,10 @@ public class MainController {
                 boolean created = currentFile.createNewFile();
                 if (created) {
                     System.out.println("Создан новый файл: " + fileName);
-                    logger.debug("Создан новый " + dirPath + fileSeparator + fileName );
+                    LOGGER.debug("Создан новый " + dirPath + fileSeparator + fileName );
                 }
             } catch (IOException ex){
-                logger.error(ex.getMessage(),ex);
+                LOGGER.error(ex.getMessage(),ex);
             }
         } else {
             System.out.println("Выбран файл: " + fileName);
@@ -451,14 +451,14 @@ public class MainController {
         try (BufferedWriter bufWrite = new BufferedWriter(new FileWriter("lastList.txt"))){
             bufWrite.write(fileName);
         }catch (IOException e){
-            logger.error(e.getMessage(),e);
+            LOGGER.error(e.getMessage(),e);
         }
         fileName = dirPath+fileSeparator+fileName;
-        logger.info("Текущий файл списка задач " + fileName);
+        LOGGER.info("Текущий файл списка задач " + fileName);
     }
     private void setExit (String inputString){
         if (inputString.equals("exit")){
-            logger.info("Программа завершена по команде exit");
+            LOGGER.info("Программа завершена по команде exit");
             System.exit(0);
         }
     }
