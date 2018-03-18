@@ -27,7 +27,7 @@ public class MainController {
     public static void main(String[] args) throws IOException, ParseException {
         MainController controller = new MainController();
         logger.info("Запуск приложения");
-        controller.ViewMenu();
+        controller.viewMenu();
     }
     /**
      * Метод для вывода активных Задач на сутки
@@ -43,7 +43,7 @@ public class MainController {
         for (Map.Entry<Date,Set<Task>> entry: map.entrySet()) {
         String tmpDate = formatDate.format(entry.getKey());
         String stringTask = calendarTask(entry.getValue()).toString();
-            System.out.print(tmpDate + " " + stringTask );
+        System.out.print(tmpDate + " " + stringTask );
         }
     }
 
@@ -55,9 +55,9 @@ public class MainController {
     Set<Task> setTask = new HashSet<>(set);
     ArrayTaskList listTask = new ArrayTaskList();
     for (Task task: setTask){
-    listTask.add(task);
+        listTask.add(task);
     }
-        return listTask;
+    return listTask;
     }
 
 
@@ -78,8 +78,11 @@ public class MainController {
         System.out.println("1. Время начала задачи: " + formatDate.format(inTask.getStartTime()));
         System.out.println("2. Время окончания задачи: " + formatDate.format(inTask.getEndTime()) );
         System.out.println("3. Время повторения в минутах: " + inTask.getRepeatInterval()/60);
-        if (inTask.isActive()){System.out.println("4.Задача активна");}
-        else {System.out.println("4. Задача не активна");}
+        if (inTask.isActive()){
+            System.out.println("4.Задача активна");
+        } else {
+            System.out.println("4. Задача не активна");
+        }
     }
 
     /**
@@ -100,13 +103,14 @@ public class MainController {
         currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число мин.): ");
         currentInterval = 60*currentInterval;
 
-if (currentInterval == 0){
-    Task currentTask = new Task(nameTask,endData);
-    currentList.add(currentTask);
-} else {Task currentTask = new Task(nameTask,beginData,endData,currentInterval);
-    currentList.add(currentTask);
-}
-logger.info("Добавлена новая задача " + nameTask);
+        if (currentInterval == 0){
+            Task currentTask = new Task(nameTask,endData);
+            currentList.add(currentTask);
+        } else {
+            Task currentTask = new Task(nameTask,beginData,endData,currentInterval);
+            currentList.add(currentTask);
+        }
+        logger.info("Добавлена новая задача " + nameTask);
         TaskIO.writeText(currentList, new File(fileName));
         logger.info("Задача \""+nameTask+"\" записана в файл");
     }
@@ -133,15 +137,16 @@ logger.info("Добавлена новая задача " + nameTask);
         SimpleDateFormat format = new SimpleDateFormat(IN_FORMAT_DATE);
         format.setLenient(false); //жесткая проверка формата
         String stringIn;
-        Date enterDate = new Date();
-        int deltaYear = 0;
+        Date enterDate;
+        int deltaYear;
         do {
             try {
                 System.out.println(enterMess);
                 System.out.print("формат данных (дд.мм.гггг чч:мм), Enter - текущая дата: ");
                 stringIn = inData.nextLine();
                 setExit(stringIn);
-                if (stringIn.length() == 0){enterDate = new Date();
+                if (stringIn.length() == 0){
+                    enterDate = new Date();
                 } else{
                     enterDate = format.parse(stringIn);
                     // Преобразуем в календарь, получаем года и их разницу
@@ -150,7 +155,9 @@ logger.info("Добавлена новая задача " + nameTask);
                     enterToCalendar.setTime(enterDate);
                     currentToCalendar.setTime(new Date());
                     deltaYear = enterToCalendar.get(Calendar.YEAR) - currentToCalendar.get(Calendar.YEAR);
-                    if (deltaYear > MAX_YEAR) throw new ParseException("Время задачи более " + MAX_YEAR + " лет",0);
+                    if (deltaYear > MAX_YEAR){
+                        throw new ParseException("Время задачи более " + MAX_YEAR + " лет",0);
+                    }
                 }
                 break;
             } catch (ParseException e) {
@@ -178,7 +185,7 @@ logger.info("Добавлена новая задача " + nameTask);
             System.out.print(messEnter);
             inEnterNumber = inData.nextLine();
             setExit(inEnterNumber);
-           currentIndex =Integer.parseInt(inEnterNumber) ;
+            currentIndex =Integer.parseInt(inEnterNumber) ;
             if (currentIndex < 0 || currentIndex > currentList.size()-1) {
                 throw new InvalidDataExeption("The  item does not exist");
             }
@@ -201,7 +208,7 @@ logger.info("Добавлена новая задача " + nameTask);
      *@return целое положительное цисло
      */
     public int enterPozitivInt (String enterMess){
-        int currentInt = 0;
+        int currentInt;
         String inPozitivInt;
         do {
             try {
@@ -235,45 +242,50 @@ logger.info("Добавлена новая задача " + nameTask);
         int currentInterval;
         boolean activ = false;
 
-      Task editTask = getTask();
-      do {
-          showTaskDetails(editTask);
-          System.out.println("5. Сохранить и выйти");
-          editMeny = enterPozitivInt("Введите пункт меню для редактирования:");
-          switch (editMeny){
-              case 0:System.out.print("0. Ведите название задачи: ");
-              nameTask = inData.nextLine();
-              setExit(nameTask);
-              editTask.setTitle(nameTask);
-                  break;
-              case 1: beginData = enterDate("Введите дату и время начала задачи ");
-                  editTask.setTime(beginData,editTask.getEndTime(),editTask.getRepeatInterval());
-                  break;
-              case 2: endData = enterDate("Введите дату и время окончания задачи ");
-                  editTask.setTime(editTask.getStartTime(),endData,editTask.getRepeatInterval());
-                  break;
-              case 3: currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число мин.): ");
-                  currentInterval = 60*currentInterval;
-                  editTask.setTime(editTask.getStartTime(),editTask.getEndTime(),currentInterval);
-                  break;
-              case 4: activ=!activ; editTask.setActive(activ);
-                  break;
-              case 5: TaskIO.writeText(currentList, new File(fileName));
-                     logger.info("Задача \""+ nameTask + "\" изменина");
+        Task editTask = getTask();
+        do {
+            showTaskDetails(editTask);
+            System.out.println("5. Сохранить и выйти");
+            editMeny = enterPozitivInt("Введите пункт меню для редактирования:");
+            switch (editMeny) {
+                case 0:
+                    System.out.print("0. Ведите название задачи: ");
+                    nameTask = inData.nextLine();
+                    setExit(nameTask);
+                    editTask.setTitle(nameTask);
+                    break;
+                case 1:
+                    beginData = enterDate("Введите дату и время начала задачи ");
+                    editTask.setTime(beginData, editTask.getEndTime(), editTask.getRepeatInterval());
+                    break;
+                case 2:
+                    endData = enterDate("Введите дату и время окончания задачи ");
+                    editTask.setTime(editTask.getStartTime(), endData, editTask.getRepeatInterval());
+                    break;
+                case 3:
+                    currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число мин.): ");
+                    currentInterval = 60 * currentInterval;
+                    editTask.setTime(editTask.getStartTime(), editTask.getEndTime(), currentInterval);
+                    break;
+                case 4:
+                    activ = !activ;
+                    editTask.setActive(activ);
+                    break;
+                case 5:
+                    TaskIO.writeText(currentList, new File(fileName));
+                    logger.info("Задача \"" + nameTask + "\" изменина");
                     exitEdit = true;
-              break;
-          }
-
-      }while (!exitEdit);
+                    break;
+            }
+        }while (!exitEdit);
     }
 
     // Viewer
     /**
      * Метод используется для вывода всех существующих задач
      */
-    public void ViewTask()  {
-    int index = 0;
-
+    public void viewTask(){
+        int index = 0;
         System.out.println("*** Список всех задач ***");
         if (currentList.size() == 0){
             System.out.println("Список задач пуст");
@@ -288,13 +300,12 @@ logger.info("Добавлена новая задача " + nameTask);
     /**
      * Метод используется для основного меню
      */
-    public void ViewMenu() throws IOException, ParseException {
+    public void viewMenu() throws IOException, ParseException {
         String inViewMenu;
         System.out.println("### Welcome to TASK MANAGER ###");
         System.out.println("* Для выхода из программы введите exit");
         getBD(); //выбор файла для работы
         TaskIO.readText(currentList,new File(fileName));
-
         System.out.println();
         while (true) {
             System.out.println("*** Главное меню ***");
@@ -305,7 +316,6 @@ logger.info("Добавлена новая задача " + nameTask);
             System.out.println("5 - Удалить задачу");
             System.out.println("6 - Детально о задаче");
             System.out.println("7 - Выход");
-
             do {
                 try {
                     System.out.print("Введите пункт меню [1-7]:");
@@ -325,31 +335,43 @@ logger.info("Добавлена новая задача " + nameTask);
                     System.out.println("! Вы ввели не целое число");
                 }
             } while (true);
-
-// обработка путкта меню
+            // обработка путкта меню
             switch (toDoit) {
-                case 1: logger.info("Выбран п.1 \"Все задачи\""); System.out.println();ViewTask();
+                case 1:
+                    logger.info("Выбран п.1 \"Все задачи\"");
+                    System.out.println();
+                    viewTask();
                     break;
-                case 2: logger.info("Выбран п.2 \"Календарь\""); System.out.println("\n*** Календарь ***"); myCalendar();
+                case 2:
+                    logger.info("Выбран п.2 \"Календарь\"");
+                    System.out.println("\n*** Календарь ***");
+                    myCalendar();
                     break;
-                case 3: logger.info("Выбран п.3 \"Добавить задачу\" ");System.out.println("\n*** Ввод новой задачи ***"); addTask();
+                case 3:
+                    logger.info("Выбран п.3 \"Добавить задачу\" ");
+                    System.out.println("\n*** Ввод новой задачи ***");
+                    addTask();
                     break;
-                case 4: logger.info("Выбран п.4 \"Редактировать задачу\"");System.out.println("\n*** Редактирование задачи ***");
-                    ViewTask();
+                case 4:
+                    logger.info("Выбран п.4 \"Редактировать задачу\"");
+                    System.out.println("\n*** Редактирование задачи ***");
+                    viewTask();
                     if (currentList.size() != 0){
                         editTask();
                     }
                     break;
-                case 5: logger.info("Выбран п.5 \"Удалить задачу\"");
+                case 5:
+                    logger.info("Выбран п.5 \"Удалить задачу\"");
                     System.out.println("\n*** Удалить задачу ***");
-                    ViewTask();
+                    viewTask();
                     if(currentList.size() != 0){
                         deleteTask();
                     }
                     break;
-                case 6: logger.info("Выбран п.6 \"Детально о задаче\"");
+                case 6:
+                    logger.info("Выбран п.6 \"Детально о задаче\"");
                     System.out.println("\n*** Детально о задаче ***");
-                    ViewTask();
+                    viewTask();
                     if(currentList.size() != 0){
                         showTaskDetails(getTask());
                     }
@@ -368,7 +390,6 @@ logger.info("Добавлена новая задача " + nameTask);
         // получаем разделитель пути в текущей операционной системе
         String fileSeparator = System.getProperty("file.separator");
         File lastFile = new File("lastList.txt");
-
         // читаем имя последней базы задач
         try (BufferedReader bufRead = new BufferedReader(new FileReader("lastList.txt"))){
             if (!lastFile.exists()) {
@@ -388,49 +409,52 @@ logger.info("Добавлена новая задача " + nameTask);
         Path path = Paths.get(dirPath);
         if (!Files.exists(path)){
             File newDir = new File(dirPath);
-           boolean createDir = newDir.mkdir();
-           //Если директория не создана выход из программы
-           if (!createDir) {System.out.println("Каталог создать не удалось");
-           logger.error("Папку " + dirPath + "создать не удалось. Программа завершена");
-           System.exit(0);}
+            //Если директория не создана выход из программы
+            if (!newDir.mkdir()) {
+                System.out.println("Каталог создать не удалось");
+                logger.error("Папку " + dirPath + "создать не удалось. Программа завершена");
+                System.exit(0);
+            }
         }
         File curentDir = new File(dirPath);
-        for (File item : curentDir.listFiles()){
+        if(curentDir.listFiles().length == 0) {
+            System.out.println("Файлов нет");
+        } else {
+            for (File item : curentDir.listFiles()){
                 System.out.println(item.getName());
             }
-            if(curentDir.listFiles().length == 0) {System.out.println("Файлов нет");}
-
-            do {
-                System.out.println("Ведите имя файла (если такого нет, будет создан):");
-                String tmpFileName =  inData.nextLine();
-                setExit(tmpFileName);
-                if (tmpFileName.length() != 0 ){
-                    fileName = tmpFileName;
-                }
-            }while (fileName.length() == 0);
-
-            File currentFile = new File(dirPath+fileSeparator+fileName);
-            if (!currentFile.exists()){
-                try{
-                    boolean created = currentFile.createNewFile();
-                    if (created) {
-                        System.out.println("Создан новый файл: " + fileName);
-                        logger.debug("Создан новый " + dirPath + fileSeparator + fileName );
-                    }
-                } catch (IOException ex){
-                    logger.error(ex.getMessage(),ex);
-                }
-            } else {
-                System.out.println("Выбран файл: " + fileName);
+        }
+        do {
+            System.out.println("Ведите имя файла (если такого нет, будет создан):");
+            String tmpFileName =  inData.nextLine();
+            setExit(tmpFileName);
+            if (tmpFileName.length() != 0 ){
+                fileName = tmpFileName;
             }
-// сохраняем имя последней базы задач
+        }while (fileName.length() == 0);
+
+        File currentFile = new File(dirPath+fileSeparator+fileName);
+        if (!currentFile.exists()){
+            try{
+                boolean created = currentFile.createNewFile();
+                if (created) {
+                    System.out.println("Создан новый файл: " + fileName);
+                    logger.debug("Создан новый " + dirPath + fileSeparator + fileName );
+                }
+            } catch (IOException ex){
+                logger.error(ex.getMessage(),ex);
+            }
+        } else {
+            System.out.println("Выбран файл: " + fileName);
+        }
+        // сохраняем имя последней базы задач
         try (BufferedWriter bufWrite = new BufferedWriter(new FileWriter("lastList.txt"))){
             bufWrite.write(fileName);
         }catch (IOException e){
             logger.error(e.getMessage(),e);
         }
-            fileName = dirPath+fileSeparator+fileName;
-            logger.info("Текущий файл списка задач " + fileName);
+        fileName = dirPath+fileSeparator+fileName;
+        logger.info("Текущий файл списка задач " + fileName);
     }
     private void setExit (String inputString){
         if (inputString.equals("exit")){
