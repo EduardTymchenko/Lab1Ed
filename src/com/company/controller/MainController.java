@@ -116,7 +116,6 @@ logger.info("Добавлена новая задача " + nameTask);
      */
     public void deleteTask() throws IOException {
         int indexTask;
-            ViewTask();
             indexTask = enterNumber("Введите номер задачи для удаления:","! Такой задачи не существует","! Вы ввели не целое число");
             String toLoggerDelNname = currentList.getTask(indexTask).getTitle();
             currentList.remove(currentList.getTask(indexTask));
@@ -276,9 +275,13 @@ logger.info("Добавлена новая задача " + nameTask);
     int index = 0;
 
         System.out.println("*** Список всех задач ***");
-        for(Task task : currentList){
-            System.out.println(index + ". " + task.getTitle());
-            index++;
+        if (currentList.size() == 0){
+            System.out.println("Список задач пуст");
+        } else {
+            for(Task task : currentList){
+                System.out.println(index + ". " + task.getTitle());
+                index++;
+            }
         }
     }
 
@@ -288,7 +291,7 @@ logger.info("Добавлена новая задача " + nameTask);
     public void ViewMenu() throws IOException, ParseException {
         String inViewMenu;
         System.out.println("### Welcome to TASK MANAGER ###");
-        System.out.println("* Для выхода с приложения введите exit");
+        System.out.println("* Для выхода из программы введите exit");
         getBD(); //выбор файла для работы
         TaskIO.readText(currentList,new File(fileName));
 
@@ -331,15 +334,28 @@ logger.info("Добавлена новая задача " + nameTask);
                     break;
                 case 3: logger.info("Выбран п.3 \"Добавить задачу\" ");System.out.println("\n*** Ввод новой задачи ***"); addTask();
                     break;
-                case 4: logger.info("Выбран п.4 \"Редактировать задачу\"");System.out.println("\n*** Редактирование задачи ***"); ViewTask(); editTask();
+                case 4: logger.info("Выбран п.4 \"Редактировать задачу\"");System.out.println("\n*** Редактирование задачи ***");
+                    ViewTask();
+                    if (currentList.size() != 0){
+                        editTask();
+                    }
                     break;
-                case 5: logger.info("Выбран п.5 \"Удалить задачу\"");System.out.println("\n*** Удалить задачу ***"); deleteTask();
+                case 5: logger.info("Выбран п.5 \"Удалить задачу\"");
+                    System.out.println("\n*** Удалить задачу ***");
+                    ViewTask();
+                    if(currentList.size() != 0){
+                        deleteTask();
+                    }
                     break;
-                case 6: logger.info("Выбран п.6 \"Детально о задаче\"");System.out.println("\n*** Детально о задаче ***"); ViewTask(); showTaskDetails(getTask());
+                case 6: logger.info("Выбран п.6 \"Детально о задаче\"");
+                    System.out.println("\n*** Детально о задаче ***");
+                    ViewTask();
+                    if(currentList.size() != 0){
+                        showTaskDetails(getTask());
+                    }
                     break;
-                case 7: logger.info("Проложение завершено по команде п.7 \"Выход\" ");  System.exit(0);
-                    break;
-
+                case 7: logger.info("Проложение завершено по команде п.7 \"Выход\" ");
+                    System.exit(0);
             }
         }
     }
