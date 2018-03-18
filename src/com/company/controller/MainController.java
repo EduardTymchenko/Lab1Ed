@@ -22,7 +22,6 @@ public class MainController {
     private final  String IN_FORMAT_DATE = "dd.MM.yyyy HH:mm";
     private final int MAX_YEAR = 100;
     private Scanner inData = new Scanner(System.in);
-    boolean exit = false;
     private TaskList currentList = new ArrayTaskList();
 
     public static void main(String[] args) throws IOException, ParseException {
@@ -136,13 +135,11 @@ logger.info("Добавлена новая задача " + nameTask);
         format.setLenient(false); //жесткая проверка формата
         String stringIn;
         Date enterDate = new Date();
-
         int deltaYear = 0;
-        boolean bError = true;
         do {
             try {
                 System.out.println(enterMess);
-                System.out.print("формат данных (дд.мм.гггг чч:мм): ");
+                System.out.print("формат данных (дд.мм.гггг чч:мм), Enter - текущая дата: ");
                 stringIn = inData.nextLine();
                 setExit(stringIn);
                 if (stringIn.length() == 0){enterDate = new Date();
@@ -156,12 +153,12 @@ logger.info("Добавлена новая задача " + nameTask);
                     deltaYear = enterToCalendar.get(Calendar.YEAR) - currentToCalendar.get(Calendar.YEAR);
                     if (deltaYear > MAX_YEAR) throw new ParseException("Время задачи более " + MAX_YEAR + " лет",0);
                 }
-                bError = false;
+                break;
             } catch (ParseException e) {
                 logger.error(e.getMessage(),e);
                 System.out.println("! Не верные данные");
             }
-        } while (bError);
+        } while (true);
         return enterDate;
     }
 
@@ -176,7 +173,6 @@ logger.info("Добавлена новая задача " + nameTask);
      */
     public int enterNumber(String messEnter, String messDataError, String messFormatError){
     int currentIndex = 0;
-    boolean bError = true;
     String inEnterNumber;
     do {
         try {
@@ -187,7 +183,7 @@ logger.info("Добавлена новая задача " + nameTask);
             if (currentIndex < 0 || currentIndex > currentList.size()-1) {
                 throw new InvalidDataExeption("The  item does not exist");
             }
-            bError = false;
+            break;
         } catch (InvalidDataExeption e) {
             logger.error(e.getMessage(),e);
             System.out.println(messDataError);
@@ -195,7 +191,7 @@ logger.info("Добавлена новая задача " + nameTask);
             logger.error(e.getMessage(),e);
             System.out.println(messFormatError);
         }
-    }while (bError);
+    }while (true);
     return currentIndex;
 }
     /**
@@ -206,7 +202,6 @@ logger.info("Добавлена новая задача " + nameTask);
      *@return целое положительное цисло
      */
     public int enterPozitivInt (String enterMess){
-        boolean bError = true;
         int currentInt = 0;
         String inPozitivInt;
         do {
@@ -218,7 +213,7 @@ logger.info("Добавлена новая задача " + nameTask);
                 if (currentInt < 0 ) {
                     throw new InvalidDataExeption("Negative number");
                 }
-                bError = false;
+                break;
             } catch (InvalidDataExeption e){
                 logger.error(e.getMessage(),e);
                 System.out.println("! Вы ввели отрицательное число");
@@ -226,7 +221,7 @@ logger.info("Добавлена новая задача " + nameTask);
                 logger.error(e.getMessage(),e);
                 System.out.println("! Вы ввели не целое число");
             }
-        } while (bError);
+        } while (true);
         return currentInt;
     }
     /**
@@ -298,8 +293,7 @@ logger.info("Добавлена новая задача " + nameTask);
         TaskIO.readText(currentList,new File(fileName));
 
         System.out.println();
-        while (!exit) {
-            boolean bError = true;
+        while (true) {
             System.out.println("*** Главное меню ***");
             System.out.println("1 - Все задачи");
             System.out.println("2 - Календарь");
@@ -319,7 +313,7 @@ logger.info("Добавлена новая задача " + nameTask);
                     if (toDoit <= 0 || toDoit > 7) {
                         throw new InvalidDataExeption("The menu item does not exist");
                     }
-                    bError = false;
+                    break;
                 } catch (InvalidDataExeption ei) {
                     logger.error(ei.getMessage(),ei);
                     System.out.println("! Пункт меню не существует");
@@ -327,13 +321,13 @@ logger.info("Добавлена новая задача " + nameTask);
                     logger.error(e.getMessage(),e);
                     System.out.println("! Вы ввели не целое число");
                 }
-            } while (bError);
+            } while (true);
 
 // обработка путкта меню
             switch (toDoit) {
                 case 1: logger.info("Выбран п.1 \"Все задачи\""); System.out.println();ViewTask();
                     break;
-                case 2: logger.info("Выбран п.2 \"Календарь\""); System.out.println("\n*** Календарь на сутки ***"); myCalendar();
+                case 2: logger.info("Выбран п.2 \"Календарь\""); System.out.println("\n*** Календарь ***"); myCalendar();
                     break;
                 case 3: logger.info("Выбран п.3 \"Добавить задачу\" ");System.out.println("\n*** Ввод новой задачи ***"); addTask();
                     break;
@@ -343,7 +337,7 @@ logger.info("Добавлена новая задача " + nameTask);
                     break;
                 case 6: logger.info("Выбран п.6 \"Детально о задаче\"");System.out.println("\n*** Детально о задаче ***"); ViewTask(); showTaskDetails(getTask());
                     break;
-                case 7: logger.info("Проложение завершено по команде п.7 \"Выход\" "); exit = true;
+                case 7: logger.info("Проложение завершено по команде п.7 \"Выход\" ");  System.exit(0);
                     break;
 
             }
@@ -382,7 +376,7 @@ logger.info("Добавлена новая задача " + nameTask);
            //Если директория не создана выход из программы
            if (!createDir) {System.out.println("Каталог создать не удалось");
            logger.error("Папку " + dirPath + "создать не удалось. Программа завершена");
-           exit = true;}
+           System.exit(0);}
         }
         File curentDir = new File(dirPath);
         for (File item : curentDir.listFiles()){
