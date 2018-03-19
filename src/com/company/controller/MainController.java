@@ -64,7 +64,7 @@ public class MainController {
     public Task getTask(){
         Task currentTask;
         int indexTask;
-        indexTask = enterNumber("Введите номер задачи:","! Такой задачи не существует","! Вы ввели не целое число");
+        indexTask = enterNumber("Введите номер задачи:");
         currentTask = currentList.getTask(indexTask);
         return  currentTask;
     }
@@ -123,7 +123,7 @@ public class MainController {
     public void deleteTask() throws IOException {
         LOGGER.info("Выбран п.5 \"Удалить задачу\"");
         int indexTask;
-            indexTask = enterNumber("Введите номер задачи для удаления:","! Такой задачи не существует","! Вы ввели не целое число");
+            indexTask = enterNumber("Введите номер задачи для удаления:");
             String toLoggerDelNname = currentList.getTask(indexTask).getTitle();
             currentList.remove(currentList.getTask(indexTask));
             TaskIO.writeText(currentList,new File(fileName));
@@ -174,13 +174,11 @@ public class MainController {
     /**
      * Метод используется для проверки ввода выбора номера задачи
      *@param messEnter String для вывода приглашения
-     *@param messDataError String для вывода сообщения InvalidDataExeption
-     *@param messFormatError String для вывода сообщения NumberFormatException
      *@exception InvalidDataExeption ошибка, ввод не существующего номера задачи
      *@exception NumberFormatException ошибка, ввод не целого числа
      *@return дату в формате "dd.MM.yyyy hh:mm"
      */
-    public int enterNumber(String messEnter, String messDataError, String messFormatError){
+    public int enterNumber(String messEnter){
     int currentIndex = 0;
     String inEnterNumber;
     do {
@@ -195,10 +193,10 @@ public class MainController {
             break;
         } catch (InvalidDataExeption e) {
             LOGGER.error(e.getMessage(),e);
-            System.out.println(messDataError);
+            System.out.println("! Такой задачи не существует");
         } catch (NumberFormatException e) {
             LOGGER.error(e.getMessage(),e);
-            System.out.println(messFormatError);
+            System.out.println("! Вы ввели не целое число");
         }
     }while (true);
     return currentIndex;
