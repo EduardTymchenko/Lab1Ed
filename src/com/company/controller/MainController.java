@@ -82,19 +82,35 @@ public class MainController {
     public void addTask() throws IOException {
         LOGGER.info("Выбран п.3 \"Добавить задачу\" ");
         String nameTask;
-        Date beginData ;
+        Date beginData = new Date() ;
         Date endData;
-        int currentInterval;
+        int currentInterval = 0;
+        int repeatTask;
+        do{
+            repeatTask = enterPozitivInt("Задача будет повторяться (1), не будет (0). Введите [0-1]");
+            if (repeatTask <= 1){
+                break;
+            }
+        }while (true);
 
         System.out.print("Введите название задачи:");
         nameTask = inData.nextLine();
         setExit(nameTask);
-        beginData = enterDate("Введите дату и время начала задачи ");
+        if (repeatTask == 1){
+            beginData = enterDate("Введите дату и время начала задачи ");
+        }
         endData = enterDate("Введите дату и время окончания задачи ");
-        currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число мин.): ");
-        currentInterval = 60*currentInterval;
+        if (repeatTask == 1){
+            do{
+                currentInterval = enterPozitivInt("Введите интервал выполнения задачи(целое число мин. > 0): ");
+                currentInterval = 60*currentInterval;
+                if(currentInterval > 0){
+                    break;
+                }
+            }while (true);
 
-        if (currentInterval == 0){
+        }
+        if (repeatTask == 0){
             Task currentTask = new Task(nameTask,endData);
             currentList.add(currentTask);
         } else {
