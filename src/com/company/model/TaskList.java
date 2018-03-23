@@ -82,7 +82,7 @@ return false;
            String out = "";
 
         for (int i = 0; i < size(); i++){
-            out += getTask(i).getTitle()+" "+ "from: " +
+            out += i + ". " + getTask(i).getTitle()+" "+ "from: " +
                    formatDate.format(getTask(i).getStartTime()) +" "+ "to: " +
                    formatDate.format(getTask(i).getEndTime()) +" "+ "repeat:" +
                     getTask(i).getRepeatInterval()+" "+

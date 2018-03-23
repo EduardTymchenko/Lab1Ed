@@ -107,14 +107,15 @@ public class Task implements Serializable{
                 interval = 0;
             }
         }
-        /*if (interval == 0) {
+       /* if (interval == 0) {
             try {
                 throw new IllegalArgumentException();
             }
             catch(IllegalArgumentException e){
-            interval = 1;
+                time = this.end;
+            setTime(time);
             }
-        }*/
+        } */
 
         if (!isRepeated()){
             time = null;

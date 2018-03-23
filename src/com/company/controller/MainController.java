@@ -60,14 +60,18 @@ public class MainController {
 
      */
     public void showTaskDetails() {
-
         LOGGER.info("Выбран п.6 \"Детально о задаче\"");
-
+        String repeatTask;
         SimpleDateFormat formatDate = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.sss");
         System.out.println("0. Название задачи: " + currentTask.getTitle());
         System.out.println("1. Время начала задачи: " + formatDate.format(currentTask.getStartTime()));
         System.out.println("2. Время окончания задачи: " + formatDate.format(currentTask.getEndTime()) );
-        System.out.println("3. Время повторения в минутах: " + currentTask.getRepeatInterval()/60);
+        if (currentTask.isRepeated()){
+            repeatTask = "ПОВТОРЯЕМАЯ";
+        }else{
+            repeatTask = "НЕПОВТОРЯЕМАЯ";
+        }
+        System.out.println("3. Задача " + repeatTask +". Время повторения в минутах: " + currentTask.getRepeatInterval()/60);
         if (currentTask.isActive()){
             System.out.println("4.Задача активна");
         } else {
@@ -242,21 +246,24 @@ public class MainController {
         LOGGER.info("Выбран п.4 \"Редактировать задачу\"");
         int editMeny;
         String nameTask = "";
-        Date beginData ;
-        Date endData;
-        int currentInterval;
+        Date beginData = new Date();
+        Date endData = new Date();
+        int currentInterval = 0;
         boolean activ = false;
+
 
         do {
             showTaskDetails();
-            System.out.println("5. Сохранить и выйти");
+
+            System.out.println("5. Изменить тип задачи");
+            System.out.println("6. Сохранить и выйти");
             editMeny = enterPozitivInt("Введите пункт меню для редактирования:");
+
             switch (editMeny) {
                 case 0:
                     System.out.print("0. Ведите название задачи: ");
                     nameTask = inData.nextLine();
                     setExit(nameTask);
-                    currentTask.setTitle(nameTask);
                     break;
                 case 1:
                     beginData = enterDate("Введите дату и время начала задачи ");
@@ -276,11 +283,22 @@ public class MainController {
                     currentTask.setActive(activ);
                     break;
                 case 5:
+                    ;
+                    break;
+                case 6:
                     TaskIO.writeText(currentList, new File(fileName));
                     LOGGER.info("Задача \"" + nameTask + "\" изменина");
                     return;
-                    default:
+                default:
                         System.out.println("! Такого пункта не существует");
+            }
+            currentTask.setTitle(nameTask);
+            if (currentInterval == 0){
+                Task currentTask = new Task(nameTask,endData);
+                currentList.add(currentTask);
+            } else {
+                Task currentTask = new Task(nameTask, beginData, endData, currentInterval);
+                currentList.add(currentTask);
             }
         }while (true);
     }
@@ -291,17 +309,14 @@ public class MainController {
      */
     public void viewTask(){
         LOGGER.info("Выбран п.1 \"Все задачи\"");
-        int index = 0;
         System.out.println("*** Список всех задач ***");
         if (currentList.size() == 0){
             System.out.println("Список задач пуст");
         } else {
-            for(Task task : currentList){
-                System.out.println(index + ". " + task.getTitle());
-                index++;
+                System.out.print(currentList.toString());
             }
         }
-    }
+
 
     /**
      * Метод используется для основного меню
