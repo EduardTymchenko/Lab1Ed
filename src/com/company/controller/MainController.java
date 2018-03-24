@@ -378,13 +378,7 @@ public class MainController {
                     deleteTask();
                     break;
                 case 6:
-                    /*System.out.println("\n*** Детально о задаче ***");
-                    viewTask();
-                    if(currentList.size() != 0){
-                        indexTask = enterNumber("Введите номер задачи:");
-                        currentTask = currentList.getTask(indexTask);
-                        showTaskDetails();
-                    }*/
+                    saveToFile();
                     break;
                 case 7:
                     LOGGER.info("Проложение завершено по команде п.7 \"Выход\" ");
@@ -469,11 +463,26 @@ public class MainController {
         fileName = dirPath+fileSeparator+fileName;
         LOGGER.info("Текущий файл списка задач " + fileName);
     }
-    private void setExit (String inputString){
+    public void setExit (String inputString){
         if (inputString.equals("exit")){
             LOGGER.info("Программа завершена по команде exit");
             System.exit(0);
         }
+    }
+    public void saveToFile() throws IOException {
+        String newFileName;
+        do{
+            System.out.println("Введите имя файла:");
+            newFileName = inData.nextLine();
+            setExit(newFileName);
+            if(newFileName.length() > 0){
+                break;
+            }
+        }while (true);
+        String fileSeparator = System.getProperty("file.separator");
+        String newFileString = new File(fileName).getParent().toString() + fileSeparator + newFileName;
+        fileName = newFileString;
+        TaskIO.writeText(currentList,new File(fileName));
     }
 }
 
