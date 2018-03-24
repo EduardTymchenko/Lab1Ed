@@ -479,6 +479,12 @@ public class MainController {
                 break;
             }
         }while (true);
+        // сохраняем имя последней базы задач
+        try (BufferedWriter bufWrite = new BufferedWriter(new FileWriter("lastList.txt"))){
+            bufWrite.write(newFileName);
+        }catch (IOException e){
+            LOGGER.error(e.getMessage(),e);
+        }
         String fileSeparator = System.getProperty("file.separator");
         String newFileString = new File(fileName).getParent().toString() + fileSeparator + newFileName;
         fileName = newFileString;
