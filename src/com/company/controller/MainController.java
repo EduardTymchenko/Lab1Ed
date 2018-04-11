@@ -2,7 +2,6 @@ package com.company.controller;
 
 import com.company.model.*;
 import org.apache.log4j.Logger;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,19 +39,13 @@ public class MainController {
         SimpleDateFormat formatDate = new SimpleDateFormat(IN_FORMAT_DATE);
         Date startDate = enterDate("Введите дату и время начала календаря ");
         Date endDate = enterDate("Введите дату и время окончания календаря ");
-        Map<Date,Set<Task>> map;
-        Set<Task> setTask ;
-        map = Tasks.calendar(currentList,startDate,endDate);
-        for (Map.Entry<Date,Set<Task>> entry: map.entrySet()) {
-            ArrayTaskList listTask = new ArrayTaskList();
-            String tmpDate = formatDate.format(entry.getKey());
-            setTask = entry.getValue();
-            for (Task enterTask : setTask){
-                listTask.add(enterTask);
-            }
-            String stringTask = listTask.toString();
-            System.out.print(tmpDate + " " + stringTask );
+        TaskList calendarTasks = new ArrayTaskList();
+
+        System.out.println("   Задачи на период с " + formatDate.format(startDate) + " по " + formatDate.format(endDate));
+        for (Task enterTask : Tasks.incoming(currentList,startDate,endDate)){
+            calendarTasks.add(enterTask);
         }
+        System.out.print(calendarTasks.toString());
     }
 
     /**

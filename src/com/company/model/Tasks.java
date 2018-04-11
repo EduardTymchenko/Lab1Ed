@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Tasks {
     
-    public static Iterable<Task> incoming(Iterable<Task> tasks, Date start, Date end){
+    public static ArrayList<Task> incoming(Iterable<Task> tasks, Date start, Date end){
         ArrayList<Task> incomin = new ArrayList<>();
         for (Task t : tasks) {
             Date nextTime = t.nextTimeAfter(start);
