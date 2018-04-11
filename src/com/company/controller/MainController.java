@@ -291,6 +291,7 @@ public class MainController {
                         currentTask.setTime(endData);
                     } else{
                         beginData = enterDate("¬ведите дату и врем€ начала задачи ");
+                        endData = enterDate("¬ведите дату и врем€ окончани€ задачи ");
                         do {
                             currentInterval = enterPozitivInt("¬ведите интервал выполнени€ задачи(целое число мин.)>0: ");
                             if (currentInterval > 0){
