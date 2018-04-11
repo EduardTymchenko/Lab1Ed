@@ -154,7 +154,7 @@ public class MainController {
     /**
      * Метод используется для проверки ввода выбора номера задачи
      *@param messEnter String для вывода приглашения
-     *@exception InvalidDataExeption ошибка, ввод не существующего номера задачи
+     *@exception IllegalArgumentException ошибка, ввод не существующего номера задачи
      *@exception NumberFormatException ошибка, ввод не целого числа
      *@return дату в формате "dd.MM.yyyy hh:mm"
      */
@@ -166,17 +166,17 @@ public class MainController {
             System.out.print(messEnter);
             inEnterNumber = inData.nextLine();
             setExit(inEnterNumber);
-            currentIndex =Integer.parseInt(inEnterNumber) ;
-            if (currentIndex < 0 || currentIndex > currentList.size()-1) {
-                throw new InvalidDataExeption("The  item does not exist");
+            currentIndex = Integer.parseInt(inEnterNumber);
+            if (currentIndex < 0 || currentIndex > currentList.size() - 1) {
+                throw new IllegalArgumentException("The  item does not exist");
             }
             break;
-        } catch (InvalidDataExeption e) {
-            LOGGER.error(e.getMessage(),e);
-            System.out.println("! Такой задачи не существует");
         } catch (NumberFormatException e) {
             LOGGER.error(e.getMessage(),e);
             System.out.println("! Вы ввели не целое число");
+        } catch (IllegalArgumentException e) {
+            LOGGER.error(e.getMessage(),e);
+            System.out.println("! Такой задачи не существует");
         }
     }while (true);
     return currentIndex;
@@ -184,7 +184,7 @@ public class MainController {
     /**
      * Метод используется для проверки ввода положительного целого цисла
      *@param enterMess String для вывода приглашения
-     *@exception InvalidDataExeption ошибка, ввод отрицательного числа
+     *@exception IllegalArgumentException ошибка, ввод отрицательного числа
      *@exception NumberFormatException ошибка, ввод не целого числа
      *@return целое положительное цисло
      */
