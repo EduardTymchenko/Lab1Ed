@@ -3,7 +3,13 @@ package com.company.model;
 import java.util.*;
 
 public class Tasks {
-    
+    /**
+     * Метод возвращает список задач, которые должны выполняться в заданый промежуток времени
+     * @param  tasks список всех задач
+     * @param start время начала интервала
+     * @param end время окончания интервала
+     * @return список задач
+     */
     public static ArrayList<Task> incoming(Iterable<Task> tasks, Date start, Date end){
         ArrayList<Task> incomin = new ArrayList<>();
         for (Task t : tasks) {
@@ -14,7 +20,14 @@ public class Tasks {
         }
         return incomin;
     }
-
+    /**
+     * Метод возвращает сортированый по дате и времени календарь выполнения задач
+     * @param  tasks список всех задач
+     * @param start время начала интервала
+     * @param end время окончания интервала
+     * @return список задач за указанный интервал,
+     * причем задачи могут повторятся, если выполняются несколько раз за заданный период
+     */
     public static SortedMap<Date, Set<Task>> calendar(Iterable<Task> tasks, Date start, Date end) {
         TreeMap<Date, Set<Task>> calendar = new TreeMap<>();
         Iterable<Task> inc = incoming(tasks, start, end);

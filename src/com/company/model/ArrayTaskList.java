@@ -4,9 +4,10 @@ public class ArrayTaskList extends TaskList {
     private static final int DEFAULT_SIZE = 10; // ? only final
     private int pointer = 0;
     private Task [] elements = new Task[DEFAULT_SIZE];
-
-
-
+    /**
+     * Метод добавления в список указанной задачи
+     * @param  task задача для добавления
+     */
     public void add(Task task){
         if (task.equals(null)) {
             try {
@@ -28,7 +29,11 @@ public class ArrayTaskList extends TaskList {
             pointer++;
         }
     }
-
+    /**
+     * Метод удаляет из списока указанную задачу
+     * @param  task задача для удаления
+     * @return true, если задача была в списке и удалена
+     */
     public boolean remove (Task task){
         int removePointer = 0;
 
@@ -58,11 +63,18 @@ public class ArrayTaskList extends TaskList {
         }
         return false;
     }
-
+    /**
+     * Метод возвращает количество задач в списке
+     * @return число integer задач в списке
+     */
     public int size(){
         return (pointer);
     }
-
+    /**
+     * Метод возвращает задачу по индексу
+     * @param index индекс задачи, первый элеменнт 0
+     * @return задачу, Task
+     */
     public Task getTask(int index){
         if (index > pointer || index < 0) {
             try {
@@ -73,14 +85,4 @@ public class ArrayTaskList extends TaskList {
         }
         return elements[index];
     }
-/*
-    public ArrayTaskList incoming(int from, int to){
-        ArrayTaskList incom = new ArrayTaskList();
-        for (int i = 0; i < pointer; i++){
-            if (elements[i].isActive() & (elements[i].nextTimeAfter(from) != -1)
-                    & (elements[i].nextTimeAfter(from) <= to))
-                incom.add(elements[i]);
-        }
-        return incom;
-    }*/
 }

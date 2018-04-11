@@ -19,21 +19,28 @@ public abstract class TaskList implements Iterable<Task>,Serializable {
             int currentIndex = 0;
             boolean nextOk;
 
-
+            /**
+             * Метод проверяет следующий элемент коллекции
+             * @return  true - есть, false - нет
+             */
             @Override
             public boolean hasNext() {
                 return currentIndex < size();
 
             }
-
+            /**
+             * Метод возвращает следующий элемент коллекции
+             * @return  задачу
+             */
             @Override
             public Task next() {
-
                 nextOk = true;
                 return getTask(currentIndex++);
 
             }
-
+            /**
+             * Метод удаляет текущий элемент коллекции
+             */
             @Override
             public void remove(){
 
@@ -44,7 +51,9 @@ public abstract class TaskList implements Iterable<Task>,Serializable {
             }
         };
     }
-
+    /**
+     * Метод сравнивает обекты
+     */
   @Override
     public boolean equals(Object o) {
         
@@ -53,17 +62,16 @@ public abstract class TaskList implements Iterable<Task>,Serializable {
         if (o.getClass() != this.getClass()) return false;
         TaskList that = (TaskList) o;
         if (this.size() != that.size()) return false;
-        
-        
-         
-            if (this.toString().equals(that.toString())) {
+        if (this.toString().equals(that.toString())) {
                 return true;
             }
-        
-return false;
+            return false;
     }
 
-
+    /**
+     * Метод вычисляет хеш-код объекта
+     * @return хеш-код, integer
+     */
     @Override
     public int hashCode() {
         final int prime = 37;
@@ -72,10 +80,12 @@ return false;
             
                 result = prime * result + i;
             }
-        
         return result;
     }
-
+    /**
+     * Метод выводит на экран полную информацию о задаче
+     * @return строку сданными о задаче
+     */
         @Override
     public String toString(){
         SimpleDateFormat formatDate = new SimpleDateFormat("[YYYY-MM-dd HH:mm:ss.SSS]");
@@ -92,24 +102,4 @@ return false;
                     }
         return out;
         }
-
-
-/*
-        public TaskList incoming(int from, int to){
-            TaskList incom ;
-            if (this instanceof LinkedTaskList) {
-                incom = new LinkedTaskList();
-            } else {
-                incom = new ArrayTaskList();
-            }
-
-            for (int i = 0; i < size(); i++){
-                if (getTask(i).isActive() & (getTask(i).nextTimeAfter(from) != -1)
-                        & (getTask(i).nextTimeAfter(from) <= to))
-                    incom.add(getTask(i));
-            }
-            return incom;
-        }
-*/
-
     }

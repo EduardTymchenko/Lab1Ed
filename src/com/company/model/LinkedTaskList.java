@@ -16,7 +16,10 @@ public class LinkedTaskList extends TaskList{
             this.prev = prev;
         }
     }
-
+    /**
+     * Метод добавления в связной список указанной задачи
+     * @param  task задача для добавления
+     */
     public void add(Task task){
 
         if (task.equals(null)) {
@@ -43,12 +46,18 @@ public class LinkedTaskList extends TaskList{
         }
         pointer++;
     }
-
+    /**
+     * Метод возвращает количество задач в связном списке
+     * @return число integer задач в списке
+     */
     public int size(){
-
         return (pointer);
     }
-
+    /**
+     * Метод возвращает задачу по индексу связного списка
+     * @param index индекс задачи, первый элеменнт 0
+     * @return задачу, Task
+     */
     public Task getTask(int index){
         if (index >= pointer || index < 0) {
             try {
@@ -70,9 +79,12 @@ public class LinkedTaskList extends TaskList{
             return x.data;
         }
     }
-
+    /**
+     * Метод удаляет из связног списока указанную задачу
+     * @param  task задача для удаления
+     * @return true, если задача была в списке и удалена
+     */
     public boolean remove (Task task){
-    
         if (task == null) {
                 return false;
             }
@@ -109,15 +121,4 @@ public class LinkedTaskList extends TaskList{
         }
         return false;
     }
-
-/*
-    public LinkedTaskList incoming(int from, int to){
-        LinkedTaskList incom = new LinkedTaskList();
-        for (int i = 0; i < pointer; i++){
-            if (getTask(i).isActive() & (getTask(i).nextTimeAfter(from) != -1)
-                    & (getTask(i).nextTimeAfter(from) <= to))
-                incom.add(getTask(i));
-        }
-        return incom;
-    }*/
 }

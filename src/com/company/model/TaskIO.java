@@ -5,10 +5,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 public class TaskIO {
-
-    public static void write(TaskList tasks, OutputStream out) throws IOException {
+    /**
+     * Метод записывает задачи из списка в поток в бинарном формате
+     * @param tasks список задач
+     * @param out поток для вывода
+     */
+    public static void write(TaskList tasks, OutputStream out) {
         //use try-with-resources for Java 7 and later
         try (DataOutputStream outStream =  new DataOutputStream(out))
         {
@@ -29,8 +32,12 @@ public class TaskIO {
             System.out.println("Could not open OutputStream:" + out);
         }
     }
-
-    public static void read(TaskList tasks, InputStream in) throws IOException{
+    /**
+     * Метод читает из потока задачи в бинарном формате
+     * @param tasks список задач
+     * @param in входной поток
+     */
+    public static void read(TaskList tasks, InputStream in) {
 
         try (DataInputStream inStream = new DataInputStream(in))
         {
@@ -56,7 +63,11 @@ public class TaskIO {
             System.out.println("Could not open OutputStream:" + in);
         }
     }
-
+    /**
+     * Метод записывает задачи из списка в файл в бинарном формате
+     * @param tasks список задач
+     * @param file файл для записи
+     */
     public static void writeBinary(TaskList tasks, File file) throws IOException {
 
         try (FileOutputStream fileOut = new FileOutputStream(file))
@@ -64,14 +75,22 @@ public class TaskIO {
             write(tasks,fileOut);
         }
     }
-
+    /**
+     * Метод читает из файла задачи  в бинарном формате
+     * @param tasks список задач
+     * @param file файл для чтения
+     */
     public static void readBinary(TaskList tasks, File file) throws IOException{
 
         try (FileInputStream fileInput = new FileInputStream(file)){
             read(tasks, fileInput);
         }
     }
-
+    /**
+     * Метод записывает задачи из списка в поток в текстовом формате
+     * @param tasks список задач
+     * @param out поток для вывода
+     */
     public static void write(TaskList tasks, Writer out) throws IOException {
         final String TIME_PATTERN = "[yyyy-MM-dd HH:mm:ss.sss]";
         SimpleDateFormat DATE = new SimpleDateFormat(TIME_PATTERN);
@@ -154,7 +173,11 @@ public class TaskIO {
             out.close();
         }
     }
-
+    /**
+     * Метод читает из потока задачи в тектовом формате
+     * @param tasks список задач
+     * @param in входной поток
+     */
     public static void read(TaskList tasks, Reader in) throws IOException {
         BufferedReader buffReader = null;
         try {
@@ -221,7 +244,11 @@ public class TaskIO {
         }
 
     }
-
+    /**
+     * Метод записывает задачи из списка в файл в тектовом формате
+     * @param tasks список задач
+     * @param file файл для записи
+     */
     public static void writeText(TaskList tasks, File file) throws IOException {
         //use try before Java 7
         FileWriter writerFile = null;
@@ -234,8 +261,12 @@ public class TaskIO {
         finally {
             writerFile.close();
         }
-
     }
+    /**
+     * Метод читает из файла задачи  в текстовом формате
+     * @param tasks список задач
+     * @param file файл для чтения
+     */
     public static void readText(TaskList tasks, File file) throws IOException, ParseException {
         FileReader fileReader = null;
         try {

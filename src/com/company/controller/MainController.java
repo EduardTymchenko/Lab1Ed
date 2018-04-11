@@ -24,7 +24,9 @@ public class MainController {
     // номер задачи в текущем списке
     private int indexTask;
 
-
+    /**
+     * Вход в программу
+     */
     public static void main(String[] args) throws IOException, ParseException {
         MainController controller = new MainController();
         LOGGER.info("Запуск приложения");
@@ -113,7 +115,6 @@ public class MainController {
      * Метод используется для проверки ввода даты
      *@param enterMess String для вывода приглашения
      *@return дату в формате "dd.MM.yyyy hh:mm"
-     *@exception ParseException ошибка ввода формата даты
      *
      */
     public Date enterDate(String enterMess){
@@ -326,7 +327,7 @@ public class MainController {
 
 
     /**
-     * Метод используется для основного меню
+     * Метод вывода основного меню
      */
     public void viewMenu() throws IOException, ParseException {
         int toDoit;
@@ -457,12 +458,19 @@ public class MainController {
         fileName = dirPath+fileSeparator+fileName;
         LOGGER.info("Текущий файл списка задач " + fileName);
     }
+    /**
+     * Метод используется для выхода из прогоаммы по  команде "exit"
+     * @param inputString String проверка вводимого текста на соответствие команде "exit"
+     */
     public void setExit (String inputString){
         if (inputString.equals("exit")){
             LOGGER.info("Программа завершена по команде exit");
             System.exit(0);
         }
     }
+    /**
+     * Метод для сохранения текущей базы в новый файл
+     */
     public void saveToFile() throws IOException {
         String newFileName;
         do{
